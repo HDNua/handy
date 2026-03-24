@@ -1,0 +1,23 @@
+NAND 설계 - Verification
+
+NAND Flash Memory의 Function 동작 검증을 책임지고 있습니다.
+회로 설계된 IP가 정상 동작하는지 Simulation과 Script를 통해 확인합니다.
+RTL/Gate Dynamic Simulation과 AMS를 실행하며 검증 대상은
+Verilog/SystemVerilog 기반이고 회로 성격에 따라 Modeling이 필요합니다. 
+1) TestBench 개발 및 유지 보수
+2) Simulation 수행 및 결과 분석
+3) Bug Debugging 및 Reporting
+4) 자동화 도구 Scripting
+5) Spec. 분석 및 검증 시나리오 작성
+6) 새로운 검증 methodology 개발
+1) NAND 설계 경험
+2) Programming 언어 능력이 뛰어나거나 관련 경험
+3) A.I. 관련 지식이나 관심이 많고 프로젝트 경험
+4) 새로운 검증 방법을 개발한 경험
+학력은 4년제 이상이며, 반도체/전자/전기/컴퓨터 공학 등 공학 계열 전공자인 분
+아래의 역량이 있으며 경력 2년 이상인 분
+1) Verilog/SystemVerilog, UVM 기반의 디지털 회로 설계나 검증 경험
+2) 다양한 EDA Tool 경험 (Xcelium, VCS, Questa 등)
+3) Python, Perl, C++, Shell 등 scripting으로 자동화 경험
+4) 주어진 Spec.으로 검증 시나리오를 직접 작성 경험
+5) 논리적 사고, 문제 해결, 협업과 소통 역량
