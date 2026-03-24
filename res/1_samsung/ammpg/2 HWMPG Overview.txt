@@ -1,0 +1,5 @@
+
+
+HWMPG 란, Hardware Memory Power Gating 의 약자로,
+블록 미동작 구간에서 SRAM 을 PDN 또는 RET state로 보내서
+leakage power 를 줄여보려는 시도입니다.

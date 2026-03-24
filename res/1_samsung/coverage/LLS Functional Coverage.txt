@@ -1,0 +1,46 @@
+
+Vector 내에 존재하는 register 의 cross-bin 조합을 RTL simulatino 전에 확인함으로써
+function 관점에서 coverage hole 이 있는지를 확인합니다.
+
+
+# Coverage 개념
+- 검증에서의 coverage : 검증의 완전성을 측정하는 지표 중 하나
+> 검증 과정에서 얼마나 다양한 조건과 시나리오를 테스트 했는가?
+> 테스트가 DUT 의 가능한 동작을 얼마나 잘 cover 하는지, 모든 가능한 시나리오와 조건이 test 되었는지?
+- 수치적 지표이며, 전체 'cover해야 할 대상의 수'와 '실제 cover된 수'를 사용하여 주로 %로 나타냄
+
+
+(1-1) Code Coverage
+
+
+(1-2) Functional Coverage
+- 개요 : 테스트가 디자인 스펙(디자인의 기능적인 요건)을 얼마나 잘 cover 했는지 보기 위한 지표
+- Coverage 측정 : Functional coverage 를 위한 별도의 coding 이 필요
+- covergroup 등을 통해 bin 들을 생성하며, test를 통해 이 bin 들 중에 몇개를 만족하였는지 수치적 계산
+- 직접 어느 정도 cover 해야 할지를 정해야 함
+
+
+* Coverage 를 측정/분석한다는 것
+- 수치적 지표이므로 이상적으로는 100% 달성이 목표
+> Code coverage : 분모인 'cover 해야 할 수'가 정해져 있음
+> Functional coverage : 분모인 'cover 해야 할 수'가 정하기 나름이며, 그 수가 클수록 많은 노력이 들어감
+- 효과:
+> 검증의 완전성을 확보 가능, 검증의 현 상황을 판단 가능
+> 리스크 최소화
+
+
+* Functional Coverage
+- Modem engine 검증에 Functional coverage 적용
+
+(2-1) Register 를 이용한 functional coverage 취합
+- 개요 : 각 case 별 register 값을 통한 functional coverage 생성
+- 목표 : 특정 register 의 값이나 값의 조합을 취합하여, 원하는 function 에 대한 case 가 존재하는지 파악
+- 필요 사항:
+> 취합할 대상 register 와 조합 정보
+> 전체 register 에 대한 field 및 reset 값 정보
+> Vector register 파일과 각 testcase
+
+- 취합 flow:
+> 각 case 에 대한 벡터 생성
+> 필요한 register 에 대해서 값 추출 후 원하는 조합에 대한 coverage 측정
+> 따라서 RTL simulation 필요 없으며 vector 생성한 뒤 script 통해 coverage 측정

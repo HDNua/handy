@@ -1,0 +1,19 @@
+LLS Functional Coverage
+LLS coverage check 중 functional coverage를 구현하였습니다.
+각각의 coverage bin을 RTL 설계자로부터 제공받으면,
+LLS로 생성한 벡터가 해당 Register setting을 정말로 하고 있는지를 검사합니다.
+본래 제 업무가 아니었으나 지원 요청을 받아 적극적으로 구현했습니다.
+A와 B의 2개 반복자를 추가하여 숫자만 바뀌는 레지스터들에 대해 입력을 편하게 구현했고,
+필드 위치에서도 반복자를 허용함으로써 설계자가 해야 하는 번거로운 bin 반복 입력을 최대한 줄였습니다.
+Python 기반으로 범용성이 높으며, 간소화된 reporting과 itertools를 활용하여
+속도가 빠른 iteration을 수행하였습니다.
+진행 내용을 confluence와 mail로 남겼고,
+이 과정에서 피드백을 주고받고 요청 사항을 명확히 남겼기 때문에 이후에도 history 추적이 용이합니다.
+개발한 coverage script의 사용법을 문서로도 남기고 메신저와 구두로 적극적으로 소통하였습니다.
+
+
+
+
+------
+Vector 내에 존재하는 register 의 cross-bin 조합을 RTL simulatino 전에 확인함으로써
+function 관점에서 coverage hole 이 있는지를 확인합니다.

@@ -1,0 +1,67 @@
+DataMover
+.
+.
+.
+# Introduction
+최종적으로 DataMover 검증 환경에서는 다음을 조합함으로써 DM 전송이 타당한지를 확인하고자 합니다.
+…(1) Material 1 – DM_test.txt
+…(1) Material 2 – Simulation Log
+…(1) Material 3 – dram_cp2ap.txt
+…(1) Material 4 – DM Spec.
+.
+.
+# Materials
+이 절에서는 각각의 Material 에 대해 설명합니다.
+.
+## Material 1 – Client Data (DM_test.txt)
+각 DM Client 에 붙어있는 checker 에서 생성한 시계열 data dump file 입니다.
+이 파일은 앞서 protocol 설명에서 XferInfo 의 값에 따라 Address line, Data line, Interrupt line 이 생성됩니다.
+.
+.
+## Material 2 – Simulation Log
+Modem TOP sim 을 돌리면 나오는 일반적인 sim log 파일입니다.
+이 파일에는 DM check script 에서 확인하는 interrupt 정보가 포함되어야 합니다.
+.
+.
+## Material 3 – dram_cp2ap.txt
+DRAM 에 write 되는 AXI transaction 을 시계열 dump 한 파일입니다.
+메모리를 모델링한 것이 아니라 AXI 신호들을 logging 하여 print 한 것에 유의합니다.
+.
+.
+## Material 4 – DM Specification
+DM Client 가 동작할 때의 동작 정보, interrupt 정보 등을 설계자를 통해 취합한 Reference 파일입니다.
+동작 정보란 Flow Control 여부, Base Address 와 Offset 정보 등이 있습니다.
+.
+.
+.
+# Check Rule
+많은 경우 DM spec 에 기술된 내용, *DM_TEST.txt 파일, dram_cp2ap.txt 파일 사이에 안 맞는 부분이 있으면 다음 문제 중 하나가 발생합니다.
+…(1) Interrupt 가 일정 interval 내에 한 번 이상 뜨지 않았는지 확인한다.
+…(2) Interrupt 가 있는 client 의 경우, interrupt 가 떴을 때, 해당 인터럽트가 의미하는 Client Transaction(*_DM_TEST.txt) 에서 Address 와 Data 를 확인하고 DRAM 에 쓰여졌는지 확인한다.
+…(3) Interrupt 가 없는 client 의 경우, Interrupt indicator 가 뜬 후 일정 시간 뒤 DRAM 에 Data 가 쓰였는지 확인한다.
+…(4) *_DM_TEST.txt 파일에서 체크되지 않은 key 가 있는지 확인한다. (DM_TEST.txt 에서는 쐈으나 DRAM 에 쓰여지지 않은 경우)
+…(5) *_DM_TEST.tx 파일이 필요해서 생성되었으나 한 번도 열리지 않은 적이 있는지 확인한다. (DM_TEST.txt 에서는 쐈으나 DRAM 에 쓰여지지 않은 경우)
+…(6) Burst 가 발생했으나 해당하는 interrupt 가 없는 경우가 있는지 확인한다.
+…(7) Interrupt 가 발생했으나 해당하는 Burst 가 없는 경우가 있는지 확인한다.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+

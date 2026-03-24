@@ -1,0 +1,137 @@
+DataMover
+.
+.
+.
+# Introduction
+다음은 Project7 에 적힌 DataMover 의 소개글입니다. Project1과 같이 오래된 과제에서도 똑같습니다.
+.
+.
+The MODEM Subsystem described in this document consists of the Project6 MODEM hardware, the ASIP core, the memories and buffers for the ASIP and the MODEM, the DataMover, and the bus interfaces to connect to the CPU core.
+The MODEM DataMover block extends the main idea to provide a general support for the data transfer between the CPU core & the ASIP core and the MODEM hardware.
+.
+.
+사실 위 문서에 적힌 내용을 그냥 받아들이기는 어렵고, 다음 설명이 이해하기 쉽습니다.
+DataMover 는 CPU 를 통한 Memory Access 와 구별되는, 별도 채널의 DMA-Direct Memory Access- 입니다.
+채널이 분리되어 있으므로 CPU가 BUS를 점유하고 있는 등의 상황에서도 Memory Access가 가능하며, 이를 통해 Data 전송 속도를 향상시킵니다.
+.
+.
+Project6 과제의 문서에는 DataMover에 대한 설명이 담겨있습니다.
+DataMover란 DataMover client와 Memory 간의 DMA 이다.
+Client 들의 설계 시 block simulation 에서 protocol check를 진행하고 있으나,
+Data 전송이 맞게 진행되었는지,
+여러 DataMover 들을 운용할 때 Client 간의 충돌로 Data를 덮어쓰거나,
+주소가 겹치는 부분은 없는지에 대한 확인 등은,
+모든 block을 dut로 하는 Rx TOP sim 환경을 이용해야 한다.
+.
+.
+결국 DataMover란, Memory Access를 좀 더 빠르게 하고 싶은 block 을 support 하기 위한 모듈입니다.
+DataMover를 사용하는 block을 DataMover Client 라고 합니다.
+.
+.
+현재 DataMover 검증 환경은,
+각 Client 에서 전송하는 Transaction Data가 Memory에 정상적으로 쓰였는지를 확인하고, 운용 관점에서 잘못된 동작이 있는지를 검사하는 것이 목적입니다.
+(Data를 채가기 전에 Data가 다른 data로 override 되거나 엉뚱한 곳에 쓰이는 일이 없는지)
+.
+.
+## DataMover Environment (Simplified)
+각 Client 는 DataMover 를 통해 DRAM 에 Access 합니다.
+	•	각 block마다 DataMover Client가 존재하여,
+	•	이 Client가 (Protocol Checker, Data Dumper) block 을 통과한 후,
+	•	DataMover로 전송된 다음,
+	•	DRAM 에 Access 됩니다.
+.
+Protocol Checker 와 Data Dumper 는 모두 값의 타당성을 검사하기 위한 블록이며 내부 데이터를 수정하지 않습니다.
+.
+.
+.
+# Protocol
+이 절에서는 DataMover protocol 에 대해, 조금 더 이해하기 쉬운 형태로 문서를 재작성 해봅시다.
+.
+Client 가 DataMover 를 통해 DMA를 하려면, 그에 맞는 호출 규약을 지켜야 합니다. 이 규칙을 DataMover Protocol 이라 합니다.
+DataMover Protocol 은 현재 Flow Control 방식과 Non-Flow Control 방식으로 나뉩니다.
+.
+Flow Control 이란 Data 를 주고받음에 있어 서로 약속된 신호를 가지고, 이를 토대로 데이터를 순차 전송함을 의미합니다.
+Non-Flow Control 이란, 이러한 약속된 신호가 없이 데이터를 주루룩 전송한다는 뜻입니다.
+Project7 과제 기준, 현재 DataMover 전송은 모두 Flow Control 방식입니다.
+.
+먼저 Non-Flow Control 전송 방식부터 살펴보겠습니다.
+.
+### Client Transfer Data – Non-Flow Control, 500 MHz
+.
+기본적인 전송 컨셉은 다음과 같습니다.
+	•	처음에는 전송할 데이터를 보낸다.
+	•	그 다음부터 데이터를 일렬로 보낸다.
+	•	다 보내는 시점에는 완료 플래그를 마지막 데이터와 함께 띄워준다
+.
+.
+.
+다음은 DataMover를 이용한 데이터 전송에 필요한 신호들입니다.
+	•	oXferInfo – 현재 전송에 대한 정보를 표현합니다. 값은 (1, 2, 3) 중에 하나일 수 있습니다.
+	•	oAddrOrData – 전송하려는 데이터입니다. 이 값은 oXferInfo == 1 일때는 Address, 그 외의 경우는 Data 입니다.
+	•	oIntrInd – 데이터 전송이 완료되었음을 의미하는 플래그 입니다.
+
+.
+각 포트의 값에 따라 DataMover 는 다음과 같이 동작합니다.
+oXferInfo == 1 : oAddrOrData 는 Addr 를 의미합니다.
+…> Client 에 따라 상위 5비트는 Burst ID, 나머지 하위 비트 (26 or 32) 가 Address 를 의미합니다.
+oXferInfo == 2 : oAddrOrData 는 Data 를 의미합니다.
+…> Ready가 1일 때 매 Clock Cycle 동안 유효한 Data가 와야 합니다.
+oXferInfo == 3 : oAddrOrData 는 Data 를 의미합니다.
+…> DataMover transaction의 끝을 나타냅니다.
+…> IntInd가 뜨면 Interrupt 전송 및 DRAM 전송 체크 합니다.
+…> Interrupt가 뜨기 전 같은 주소에 한 번 이상 값을 쓸 경우, 가장 마지막 값만 읽히게 됩니다.
+…> 이는 DataMover 운용 방침과 다르기 때문에, Interrupt가 뜨고 읽기 전까지 값은 override 되어서는 안 됩니다.
+.
+.
+참고: oIntrInd 포트의 이름은 Interrupt Indicator 에서 따왔다고 합니다.
+그러나 여기서 Interrupt는 DataMover Interrupt 를 의미할 뿐, 실제 CPU 에 전달되는 Interrupt 가 아님에 주의합니다.
+.
+.
+.
+### Client Transfer Data – Non-Flow Control, 250 MHz
+생략.
+.
+### Client Transfer Data – Flow Control, 250 MHz & 500 MHz 공통
+생략.
+.
+.
+.
+사실 Non-Flow Control 과 Flow Control 의 차이점은 Ready 신호의 존재 유무입니다.
+Ready 신호가 있으면 Flow Control 방식, 없으면 Non-Flow Control 방식입니다.
+.
+.
+Project6 문서에는 보다 자세한 설명이 담겨있습니다.
+[[[ Client의 종류 ]]]
+… (1) Flow Control vs. Non-Flow Control
+Flow Control Client 는 DataMover 에서 주는 Ready 신호에 따라 Client 의 동작이 제한된다.
+DataMover가 허용 가능한 상태(ready가 asserted)에서만 Data를 전송하기 때문에,
+보내야 하는 Data가 많은 경우 Client에 부담이 될 수 있다.
+이에 반해 Non-Flow Control Client는 DataMover 에서 주는 Ready 신호와 관계 없이 데이터를 전송한다.
+따라서 주기적으로 Data를 보낼 필요가 있거나, 보내는 데이터의 양이 많지 않은 경우, 정해진 Rule에 따라서 전송하게 된다.
+DataMover의 상태를 보지 않고 Data Transaction을 보내기 때문에,
+DRAM의 data를 읽어가기 전에 데이터가 덮어쓰여질 수 있다.
+.
+… (2) Interrupt가 assign 된 client 와 unassigned client
+XferInfo == 3 이 assert 된 경우 해당 transaction 을 전송한 client에 mapping 된 interrupt를 띄워 S/W가 읽어가도록 한다.
+그러나 몇몇 Client 의 경우 interrupt 가 mapping 되어있지 않고, 특정 시점에 읽어가는 것으로 약속된 IP 들이 있다.
+해당 IP 들에 대해서는 DataMover 전송 종료 후, 10us 뒤에 Memory 에 쓰여지는 AXI transaction 이 있는지를 확인했다.
+그러나 이 부분은 실제 S/W 에서 떠가는 시점에 맞추어 확인해야 할 필요가 있다.
+… end
+.
+.
+제약 조건
+.
+…(1) Non-Flow Control Client 의 같은 BID(Burst ID) 에서 DataMover transaction 이 발생 시에는 최소한의 interval 이 보장되어야 한다.
+Flow Control 의 경우 Ready 에 의해 Client 의 동작이 제한되므로 제외.
+.
+…(2) Base address 와 offset
+Base address 에 offset 이 더해진 주소에 DataMover data 가 전송될 때,
+Base address 는 DataMover 에서 Register setting 등을 통해 설정되고,
+Offset 은 client 에서 Register setting 이나 자체 logic 을 통해 지정해주도록 되어있다.
+.
+.
+.
+.
+
+
+From Project3 model, client interface support Multi Burst( it also means multi interrupt ) skim. It means that one client can send different burst identified by burst ID correspond to different interrupt index. Burst ID information included in Burst data which transferred by AddrOrData line dedicated position & timing.

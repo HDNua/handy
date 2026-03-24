@@ -1,0 +1,9 @@
+Modem 검증을 위한 새로운 환경인 C++ Virtual Platform(이하 VP)의 검증 코드를 구현했습니다. Interrupt checker, DataMover checker, FileSystem Interface for cross-platform 에 이르는 검증 환경을 setup했습니다. 외부 의존성을 최소화할 수 있도록 pure C++을 사용하여 작성되었습니다.
+* RTL Sim Log Parser : RTL 출력과 VP 출력을 비교하기 위해 우선 RTL 출력을 바탕으로 VP 환경의 입력으로 만들어야 하는데, 이 작업을 수행하는 도구를 구현
+* Interrupt Checker : Interrupt 발생의 개수 및 순서 차이를 기존 RTL 환경의 출력 log와 신규 VP 환경의 출력 log를 비교하는 식으로 구현. Interrupt Count Checker와 Interrupt Sequence Checker로 구분
+* DataMover : 대용량 데이터 전송을 위한 Modem Engine Module. 기존 RTL 환경의 출력 log와 신규 VP 환경의 출력 log를 비교하는 식으로 구현
+* FileSystem Interface : RHEL vs Windows vs WSL 등 각기 다른 환경에서 운영체제별 File I/O를 공통된 API로 수행하기 위한 bridge 구현
+* Asset Updater : RTL Sim 결과의 출력 파일을 VP 환경에 hierarchy를 맞춰 편리하게 옮기는 수준의 script 구현
+* ISR compare : Interrupt의 비교 뿐만 아니라, Interrupt Sub-routine(ISR)로 발생하는 register setting에 대한 비교까지 지원하도록 코드 구현
+* Bitmap Waveform View : transaction에서 interrupt 발생을 보다 시각적으로 쉽게 볼 수 있도록 BMP image로 파형을 출력하는 코드 구현. 이를 통해 실제 VP 환경 상의 bug를 latch timing bug를 찾을 수 있었고 버그 수정된 기록이 있음
+* Jira Report Automation : Report 편의성 증대를 위해 Jira Report를 CSV 형태로 편리하게 출력해주는 코드 구현

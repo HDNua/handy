@@ -1,0 +1,32 @@
+[모뎀 엔진 검증]
+기간: 2018-04 ~ 2026-01
+성과: Engine Block & TOP 검증 완수 및 검증 속도 향상
+역할:
+1. Xcelium 및 VCS 기반 모뎀 엔진 검증 수행
+2. VCS 병렬성을 활용한 TB 수정으로 레지스터 Test 시간 8배 단축
+3. 파일 전송 자동화 시스템을 개발하여 중단되지 않는 검증 환경 구축
+기술: UVM, SystemVerilog, VCS, Xcelium, S/W
+
+[DataMover - DMA 검증]
+기간: 2024-03 ~ 2026-01
+성과: DMA 를 위한 DataMover IP 검증 수행 및 Python/C++ 기반 검증 환경 고도화
+역할:
+1. DataMover IP의 다양한 전송 시나리오(Flow/Non-Flow) 검증 및 디버깅
+2. Checker 유지보수 및 Local LLM 활용을 통한 레거시 코드 최신화
+3. C++ 기반 Virtual Platform 전용 DM Checker 및 디버깅용 Bitmap Waveform Viewer 개발
+기술: DMA, C++, VP, AI, Python, Perl, GUI
+
+[Memory Power Gating 검증]
+기간: 2023-11 ~ 2026-01
+성과: Memory Power Gating 검증을 위한 Checker 개발 및 안정성 확보
+역할:
+1. SRAM Port 모니터링을 통한 Power Down/Retention 동작 시퀀스 검증
+기술: SystemVerilog, Python, Tcl
+
+[Code/Functional Coverage]
+기간: 2024-10 ~ 2026-01
+성과: Code Coverage 측정 수행 및 Register Functional Coverage 개발
+역할:
+1. Verdi 등 타사 Tool 사용하여 매 과제마다 Code coverage 측정 업무 수행
+2. 레지스터 조합 사전 검사로 미검증 function 선제 탐지 도구 개발 및 운용
+기술: Verdi, VCS, Python, TDD

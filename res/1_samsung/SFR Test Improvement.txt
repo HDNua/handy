@@ -1,0 +1,6 @@
+SFR test의 job 단위를 개별 regf로 분리하였습니다. SFR test는 기존에 임의의 regf를 묶어 simulation 했는데, 이 방식은 적은 수의 job으로 regf 묶음을 serial 하게 검증하는 방식이었고 일반적으로 12h~16h 정도의 시간이 소요되었습니다. 또한 regf 묶음 단위가 불분명하여 report 할 때 혼란스러웠습니다. 저는 VCS migration을 진행하면서 모든 regf를 분리하여 개별 job으로 던질 수 있게 bench를 변경하였습니다. 이로 인해 병렬성이 극대화되어 simulation 시간을 1h~2h 안에 끝낼 수 있게 되었고, 이로써 8배 이상의 검증 시간 감소 효과를 얻었습니다.
+
+* SFR test : Special Function Register test. RTL Engine의 레지스터 설정이 원하는대로 동작하는지 검사하는 테스트.
+* regf : Register File
+* Job : 회사의 업무는 외부 벤더의 tool을 사용하는데, 모든 직원에게 license를 다 줄 수 없기 때문에 queue에 프로그램을 밀어넣고, 서버가 준비된 여러 처리장치에 병렬로 나눠 돌리는 식, 각 처리장치가 들어오는 프로그램을 순서대로 처리하는 형태로 진행함. 이렇게 각 처리 장치가 수행하는 프로그램 단위를 job 이라고 함.
+* VCS : Synopsys 사의 RTL 합성을 위한 compiler & elaboration tool. EDA.

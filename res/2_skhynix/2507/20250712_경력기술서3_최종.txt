@@ -1,0 +1,37 @@
+[모뎀 엔진 검증]
+기간: 2018-04 ~ 2025-07
+성과: Engine Block & TOP 검증 완수 및 검증 속도 향상
+역할:
+1. Xcelium 및 VCS 기반 모뎀 엔진 검증 수행
+2. VCS 병렬성을 활용한 TB 수정으로 레지스터 Test 시간 8배 단축
+3. 파일 전송 자동화 시스템 구축을 통해 Sim input 전송 지연 10분 이내로 최소화
+4. TOP 업무에서 원활한 의사소통을 바탕으로 협업하여 검증 완수
+5. 프로그래밍 강의 진행을 통한 적극적 기술 공유
+기술: UVM, SystemVerilog, VCS, Xcelium, Python, Shell, C#, WinForm, SharePoint
+
+[Virtual Platform - C++ 기반 모뎀 모델]
+기간: 2024-03 ~ 2024-12
+성과: VP 검증 환경 개발
+역할:
+1. VP 동작을 위한 입력 파서 및 체커 개발
+2. FileSystem API 포함 크로스 플랫폼 검증 환경 구현
+3. waveform 그래픽 시각화 도구 구현으로 timing bug 탐지
+4. Jira report 자동화 등 각종 보조 도구 개발
+기술: C++, OS, GUI
+
+[레지스터 Functional Coverage]
+기간: 2024-10 ~ 2025-06
+성과: 레지스터 조합 사전 검사로 미검증 기능 탐지 도구 개발
+역할:
+1. 개발 주도, UI 및 Test 시나리오 정의
+2. Test-Driven 개발 환경 구축으로 유지보수 시간 50% 이하 달성
+기술: Python, TDD
+
+[AI 기반 워크플로우 향상]
+기간: 2024-01 ~ 2024-11
+성과: Ollama 활용한 Local LLM 환경 구축
+역할:
+1. AI based Perl 2 Python 번역기 구현
+> Legacy Script 변환 작업 시간 30% 절감
+2. RAG 활용 RISC-V CPU torture 코드 생성 프로젝트 제안, 개발 및 발표
+기술: AI, LLM, RAG, Python, Perl, RISC-V

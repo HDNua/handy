@@ -1,0 +1,10 @@
+
+
+QSLP 란 Quick-Sleep Low Power 의 약자로,
+QuickSleep state 에서 SRAM 을 PDN 또는 RET state로 보내서
+leakage power 를 줄여보려는 시도입니다.
+(사실 HWMPG 의 설명을 가져온 건데 대충 맞겠죠 뭐)
+
+
+RAMTOP 의 RET, PDE 포트를 보고
+이 케이스가 normal 인지, power-down 인지, retention 인지를 검증하는 checker 입니다.

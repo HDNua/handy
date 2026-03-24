@@ -1,0 +1,24 @@
+[UVM/SV 기반 Testbench 구성 및 Test Case 개발]
+기간: 2018-04 ~ 2026-01
+역할:
+1. UVM/SystemVerilog 기반 Testbench 구성 및 Block/TOP 레벨 Regression 수행 (Modem TOP sim 주도 포함)
+2. Register Test 수행 및 VCS 병렬화로 Regression 16h->2h 단축 (8배)
+3. Verdi/Simvision 활용 Waveform 디버깅 및 Report 자동화
+4. Windows-VWP 파일 자동 전송 시스템 개발로 24시간 상시 Sim Input 공급, C++ VP 검증 환경 구축
+
+[Digital IP Spec 기반 검증 계획 수립 및 In-house VIP 개발]
+기간: 2022-08 ~ 2026-01
+역할:
+1. DataMover(DMA) IP Spec 기반 Flow/Non-Flow Control 검증 시나리오 수립/수행
+2. Protocol Checker, Interrupt Checker, DM Checker In-house VIP 검증
+3. QSLP/HWMPG Power Gating Checker VIP 개발 및 Modem TOP sim 적용
+4. C++ VP 전용 Checker VIP 개발 및 VP-RTL 교차 검증, Bitmap Waveform Viewer로 Latch bug 탐지
+
+[Code/Functional Coverage Closure]
+기간: 2023-11 ~ 2026-01
+역할:
+1. 매 과제 Code Coverage 측정 및 Closure 수행 (Verdi)
+2. RTL Spec 기반 Register Functional Coverage 개발 및 Closure
+3. Register 조합 사전 검사로 RTL bug 1건 탐지/보고
+
+기술: UVM, SystemVerilog, VCS, Xcelium, Verdi, C++, Python, Shell, TDD, LLM

@@ -1,0 +1,13 @@
+저는 디지털 IP/회로 검증 업무를 수행하며 Modem 검증 프로세스의 개선과 효율화를 위해 다양한 기여를 해왔습니다. Automated LLS Transfer System을 개발하여 LLS 및 TC 전달 과정을 자동화하였습니다. SFR Test 개선에서는 기존의 Register File 묶음을 개별 job으로 분리하고 병렬 처리 가능하도록 변경하여 시뮬레이션 시간을 기존 12~16시간에서 1~2시간으로 단축하였습니다. Register setting path에 대한 검증을 위해 LLS Functional Coverage Checker를 개발하고 있으며, 이 과정에서 iterator를 도입하여 반복 입력을 간소화했고 이를 통해 검증 효율성을 강화했습니다. 검증 환경의 전반적인 개선 외에도 Tx_SymbProc, MWG Block Sim 및 Modem TOP Sim 검증을 수행했습니다.
+
+
+
+C++ 기반 Virtual Platform에서 검증 환경 전반을 구축하였습니다. RTL Simulation Log Parser를 통해 VP에서 load 가능한 register setting 목록을 추출하였고, RTL-VP 간 차이를 검사하기 위해 Interrupt Checker, DataMover Checker를 구현하였습니다. 또한 Bitmap Waveform Viewer를 통한 시각적 디버깅을 지원하였으며, 이를 통해 Bug를 발견함으로써 검증 신뢰도를 높였습니다. 추가로 Windows-Linux 간 Cross-platform을 지원하기 위해 FileSystem API를 구현하였고 WSL 환경에서 정상 동작함까지 확인하였습니다.
+
+
+
+Modem 경쟁력 강화를 위한 역량 향상에도 충실합니다. 어학 2등급 보유중으로, 전화 영어 등을 통해 글로벌 역량을 지속적으로 키우고 있으며, SystemC와 같은 HLS 세미나에도 적극적으로 참여했습니다. FastCampus 강의를 통해 Test Driven Development 개념을 배우고 적용하여 VP FileSystem API 및 LLS Functional Coverage에 대한 안정성까지 확보하였습니다. 최신 AI 기술에 대해서도 공부하여 세미나를 진행했습니다. Ollama 및 최신 기술 동향을 파트원에게 공유하고, RISC-V 검증에서 LLM 응용의 가능성에 대해 탐구하였습니다.
+
+
+
+저는 이러한 경험과 성과를 바탕으로 승격을 지원합니다. 앞으로도 검증 환경의 효율성을 높이고, 새로운 기술을 도입하여 팀의 성장에 기여할 수 있도록 최선을 다하겠습니다.

@@ -1,0 +1,414 @@
+① 회로설계(HBM)
+   #이천 #Junior & Expert
+
+
+
+
+ 우리 조직은 SK Hynix의 HBM 경쟁력 강화를 선도하는 핵심 조직으로, HBM
+ 제품을 설계/분석하고 적기에 개발하여 고객 가치를 극대화하는 역할을 맡고
+ 있습니다
+ 세계 최고의 AI 고객사들과 협력하며 HBM 기술을 선도하고 있으며, 혁신적인
+ 회로 설계 기술과 체계적인 분석 역량을 기반으로 글로벌 1위 경쟁력을
+ 만들어가고 있습니다
+
+
+
+ 1) DRAM 또는 HBM 제품의 내/외부 요구 사양에 부합하는 회로를 설계합니다
+ 2) DRAM/HBM 제품 개발 단계에서 양산을 위한 설계 품질 및 수율 개선 활동을
+    합니다.
+ 3) Wafer, KGSD(Known good stack die) 및 실장 단계의 특성 분석과 제품 Spec
+    만족 여부를 검토하고 있습니다.
+ 4) 제품 개발 단계 및 고객 system에서 고객이 만족할 수 있도록 성능을 높이고,
+    안정적으로 동작하도록 만드는 업무를 하고 있습니다.
+
+
+
+ 학력은 학사 이상이며, 반도체/ 전자/ 전기/ 물리/컴퓨터 등 공학 계열 전공자인 분
+ 아래 역량을 보유 하고 있으며, 경력 4년 이상 보유자(석/박사 학위 기간 인정)
+  1) DRAM 또는 HBM Architecture 검토 및 설계 경험
+  2) Full Custom + Digital Co-Design 설계 및 PDN 해석 경험
+  3) Full Custom based Logic Foundry 설계 경험
+  4) DRAM 또는 HBM 제품 불량 분석을 위한 다양한 Tool 및 장비 이해 경험
+
+
+
+
+ 1) DRAM 또는 HBM 설계 관련 제품 개발 및 분석 경험이 많은 분
+ 2) HBM 제품 실장 system 분석 경험을 갖고 있는 분
+ 3) Python, Spotfire, Verilog 및 Circuit Simulator
+    (Hspice, Csim, PrimeSim, Spectre, etc) 를 능숙하게 활용할 수 있는 분
+② HBM Digital Design(RTL Design)
+        #이천 #Expert
+
+
+
+
+ 우리 조직은 SK Hynix의 HBM 기술 경쟁력과 글로벌 1위 시장 지위를
+ 견인하는 핵심 조직으로, HBM Base Die 디지털 설계를 담당하고
+ 있습니다
+ 우리는 초고속 인터페이스, 저전력 설계, 고신뢰성 로직 등 HBM의 성능을
+ 결정짓는 모든 디지털 설계를 주도하며 글로벌 AI 선도 기업들과 함께
+ 차세대 메모리 기술을 실현해 나가고 있습니다
+
+
+
+ 1) 고객 요구 사항에 대해서 구체화를 진행하고, 고객과의 소통을 통해서
+    해당 내용의 상세 스펙을 작성 합니다 이를 바탕으로 유관 부서와
+    소통하여 구현할 IP를 동작을 정의하고 RTL 기반의 설계를 진행 합니다
+ 2) Digital IP 구현을 위한 요구 조건을 검토하고 PPA 평가를 통해
+    Architecture를 결정합니다 해당 IP는 RTL로 설계하고 검증하며, Physical
+    Design을 위한 guide를 작성합니다
+ 3) “설계 및 검증“ 업무에는 Logic/Macro Floorplan, Logical Integration,
+    Function 검증, Physical Design Follow-up, Wafer Test Flow 정의,
+    Silicon Chip의 검증 및 이슈 분석이 포함됩니다
+
+
+
+  학력은 학사 이상이며, 반도체/전자/전기/물리 등 공학 계열 전공자인 분
+  아래 역량 중 하나 이상을 보유하고 있으며, 경력 5년 이상 이신 분
+  1) High Speed Digital PHY 및 High Speed IP 설계 및 분석 역량
+  2) DRAM Memory Controller 설계 및 분석 역량
+  3) DRAM MBIST 설계 및 분석 역량
+  4) DRAM DFT/DFD 관련 설계 및 분석 역량
+
+
+
+  1) Interface/Memory PHY 및 Analog IP를 포함한 Digital 설계 리딩 경험
+  2) Hard IP를 포함한 Soft IP 제품 개발 및 리딩 경험(검증/분석/고객 대응)
+  3) Full-Custom Design + Digital Design 의 Mixed Design 개발 경험
+③ HBM Digital Design(검증)
+   #이천 #Junior & Expert
+
+
+
+
+ 우리 조직은 SK Hynix HBM의 초격차 달성을 위해 Analog-Digital Mixed
+ IP, Digital IP 및 Subsystem/Top Level 검증을 담당하고 있습니다.
+ HBM 제품 개발 과정에서 설계 무결성을 확보하기 위한 검증 업무를
+ 수행하며, 이를 지원하기 위해 검증 시스템 및 환경 구축, 모델 개발 등의
+ 역할도 주도하고 있습니다.
+
+
+
+
+ HBM Digital Design 검증 업무
+ 1) HBM 내 In-house, 3rd Party Digital IP 및 Mixed 설계 검증을 하고 있습니다
+ 2) 검증을 위한 In-house VIP 개발 및 3rd Parity VIP 도입 및 활용하고 있습니다
+ 3) UVM 기반의 검증 환경 구성 및 Test Case 개발을 하고 있습니다
+ 4) Regression Test 통한 Code/Func. Coverage Closure를 하고 있습니다.
+
+
+
+
+ 학력은 학사 이상이며, 반도체/ 전자/ 전기/ 컴퓨터 등 공학 계열 전공자인 분
+ 아래의 역량을 보유 하고 있으며, 경력 4년 이상 보유자
+ (석/박사 학위 수학 기간 인정)
+   1) SystemVerilog/UVM VIP, Testbench 및 Test Case 개발 역량
+   2) Digital IP Spec. 기반으로 검증 계획 수립 및 검증 프로세스 이해 역량
+   3) Code/Func. Coverage Closure
+
+
+
+
+ 1) D2D/PCIe IP 및 Subsystem 검증
+ 2) Memory Controller Subsystem (LPDDR/HBM) 검증
+ 3) NoC/NIC Bus System 검증
+ 4) SoC 주요 구성요소들 (AI/HW Accelerator, DMA 등) 검증
+④ HBM Digital Design(Front-end)
+        #이천 #Expert
+
+
+
+
+ 우리 조직은 SK Hynix의 HBM Digital Implementation을 담당하는
+ 조직입니다 최첨단 공정과 최신 EDA툴을 활용해서 Front-end, Back-end
+ 전반을 담당하며, 효율적인 개발 프로세스를 구축해 차세대 HBM 경쟁력을
+ 확보하는 역할을 하고 있습니다
+
+
+
+
+ 차세대 HBM 메모리 개발에 따른 Digital block에 대한 DFT Architecture
+ 구현 및 Implementation flow 전반에 걸친 업무를 진행하고 있습니다
+ HDPF 구조를 기반으로 PCIe, UCIe 등 Interface IP 개발 및 다양한 형태의
+ Digital Design에 대한 Implementation을 진행하고 있습니다 최첨단 공정
+ 과 최신 EDA Tool을 기반으로 PPA(Performance, Power, Area) 측면에서 최
+ 적화된 경쟁력 있는 고객 맞춤형 HBM을 개발하고 있습니다
+
+
+
+
+  학력은 학사 이상, 반도체/전자/전기/물리/기계 등 공학계열 전공자인 분
+  아래 역량 중 하나 이상의 역량이 있으며 경력 8년 이상 이신 분
+   1) 5nm 이하 선단 공정의 디자인 최적화를 위한 PPA 개선
+   2) HPDF Design 설계 및 Implementation flow 경험
+   3) Tcl/ Python Script를 통한 디자인 분석 및 환경 개선 경험
+   4) DFT 구현 및 검증 (MBIST, Tessent SSH/SSN, TestMAX 등)
+
+
+
+
+  1) TSMC 3nm 공정 개발 경험
+  2) Tessent SSH/SSN 기반 DFT 구현 및 검증
+  3) HPDF Top Project Management
+⑤ HBM Digital Design(Back-end)
+       #이천 #Expert
+
+
+
+
+ 우리 조직은 SK Hynix의 HBM Digital Implementation을 담당하는
+ 조직입니다 최첨단 공정과 최신 EDA툴을 활용해서 Front-end, Back-end
+ 전반을 담당하며, 효율적인 개발 프로세스를 구축해 차세대 HBM 경쟁력을
+ 확보하는 역할을 하고 있습니다
+
+
+
+ HBM Logic-die 내 Digital 블록의 Place & Route(P&R) 업무를 담당하고 있습니다
+ 메모리 기술의 발전에 따라 Standard HBM 뿐만 아니라 Custom HBM 설
+ 계를 Digital SoC 형태로 구현하고 있으며, HDPF 구조를 기반으로 다양한
+ 형태의 Digital Implementation을 진행하고 있습니다
+ 고객의 요구에 맞춰 PCIe, UCIe 등 Interface IP의 Implementation도 수행
+ 하고 있으며, 이를 포함하는 HBM을 개발하면서 PPAT(Performance, Power,
+ Area, TAT) 측면에서 최적화된 경쟁력 있는 고객맞춤형 HBM을 개발하고
+ 있습니다
+
+
+
+  학력은 학사 이상이며, 반도체/전자/전기/물리/기계 등 공학 계열 전공자인 분
+  아래 역량 중 하나 이상의 역량이 있으며 경력 5년 이상 이신 분
+   1) HPDF(Tiled) Top Design 경험 또는 프로젝트 운영 경험
+   2) Top Bus Routing Implementation 개발 경험
+   3) 2GHz 이상의 High Speed Digital Design 개발 경험
+   4) 5nm 이하 선단 공정의 디자인 최적화를 위한 PPAT 개선 경험
+   5) Tcl/ Python Script를 통한 디자인 분석 및 환경 개선 경험
+   6) EDA Tool 을 이용한 FE/BE/PDN 관련 환경 운용 경험
+
+
+
+  1) 3nm 이하 Nanosheet Technology 개발 경험
+  2) CPU/GPU/NPU Implementation 개발 경험
+⑥ HBM Digital Design(SoC Design)
+          #이천 #Expert
+
+
+
+  SK하이닉스의 Custom HBM Base-Die Architecture를 연구하고 이를 바탕으로
+  Full-Chip Design을 수행합니다 CHBM에 탑재되는 주요 IP로는 Host, Chiplet
+  Interface IP 와 DRAM Controller/PHY IP 및 다양한 Logic, Analog IP가 있습니다
+
+
+
+  • Hardware Description Language(Verilog, VHDL) 기반 Digital Logic IP/SOC 개발
+  • In-house & 3rd Party IP, Subsystem 바탕의 Fullchip Design
+  • Chiplet 바탕의 Physical을 고려한 Subsystem 및 Full-Chip Design(Package - bump,
+    probe-pad 등, Synthesis)
+  • Chiplet Interface PHY/Link/Protocol IP Integration 및 검증(UCIe, OpenHBI, BoW 등)
+  • Off-chip Interface PHY/Link/Transaction IP Integration 및 검증 (PCIe, CXL, USB, MIPI 등)
+  • DRAM Controller/PHY IP Integration 및 검증 (LPDDR, DDR, GDDR, HBM)
+  • RAS 요구사항 분석 및 정책, Hardware IP 혹은 Firmware 개발 및 검증
+  • SoC & Digital Logic Verification 환경 및 Verification IP 개발 및 검증
+  • Fullchip, Subsystem, IP 구동 및 검증을 위한 Test Firmware (ARM, RISC-V 등) 개발
+  • Silicon Chip Level Verification, Validation
+  • Subsystem 및 FullChip Architecture (Power/Debug/Security/DFT)
+
+
+
+  학력은 학사 이상이며, 반도체/전자/전기/물리/기계 등 공학 계열 전공자인 분
+  아래 중 하나 이상의 역량이 있으며 경력 5년 이상 이신 분
+   1) HDL 기반 Digital Logic IP 혹은 Fullchip 설계 및 검증
+   2) 개발 IP/System의 Modeling을 통한 Performance, Power & Area Estimation
+   3) Off-chip / Chiplet Interface PHY/Link Layer 설계 혹은 IP Integration 및 검증/평가
+   4) Media Controller (NAND, DRAM) 설계 혹은 IP Integration 및 검증/평가
+   5) SoC 해킹 방지하기 위한 Security Scenario 구현
+      (Secure Boot, Trust Zone, Attack Detect)
+   6) Memory 및 System Level RAS 정책 수립 및 설계/검증/평가
+   7) System-level Clock/Reset & Power Control Logic 설계 및 평가
+   8) SoC내 Analog IP Integration 및 DFT Logic 설계
+   9) Fullchip 요구 사항 및 IP/Subsystem 사양을 기반으로 On-Chip Interconnector
+      (AMBA Bus, NoC 등) 설계
+   10) Subsystem 및 FullChip Architecture 설계
+⑦ HBM Foundry PI
+       #이천 #Expert
+
+
+
+ 우리 조직은 SK Hynix의 HBM 기술 경쟁력과 글로벌 1위 시장 지위를 견인하는
+ 핵심 조직으로, HBM Base Die 개발 Foundry Engineering을 담당하고 있습니다
+ HBM선행 제품을 위한 요소 기술을 개발하고, 글로벌 Foundry업체와 긴밀한
+ 협업을 통해 HBM 적용 기술을 선도하고 있습니다
+ 기술개발
+  다양한 형태의 CHBM(Customized HBM)개발을 위해 Design House와 협력하여
+  외주 생산 전반에 대한 기술적 Interface 역할을 수행하여, 차세대 HBM기술을
+  실현해 나가고 있습니다
+ 제품개발
+  DRAM 및 Logic Process 이해를 바탕으로 소자 성능 최적화/수율 향상 시키는
+  역할을 수행합니다 HBM을 위한 소자 Target(Speed, Power)을 달성하여 제품
+  경쟁력을 확보하는 것이 주된 미션 입니다
+ Interface
+   HBM 특성을 확보하여 제품 경쟁력을 확보하는 것이 주된 미션 입니다
+
+
+
+ 기술개발
+  1) HBM Logic Die 개발을 위한 Foundry-Design-PKG연계 DFM(Design for
+    Manufacturability) Co-Optimization 수행하고 있습니다.
+  2) Foundry PDK(Process Design Kit) 분석 및 Design Rule/Model 개선을 통한
+    Logic Die 특성 최적화 작업을 합니다.
+  3) Foundry 업체와 기술 협업을 통한 PDK 개선사항 도출 및 기술 점검 하고 있습니다
+ 제품개발
+  1) Logic 소자의 AC/DC 특성 Target 설정과 최적화를 담당하며, 공정 및 소자
+    시뮬레이션을 통한 구조 예측, PCM Data 분석을 진행 합니다
+  2) Logic(FiNFET, GAA등)과 DRAM Process를 바탕으로 Integration Issue 해결과
+    Major 불량의 Defect Source 추적, 불량 Mechanism 규명으로 수율 향상을 위한
+    업무를 하고 있습니다.
+ Interface
+   1) Foundry 공정 및 Design Rule 개선을 통한 Logic Die 특성 최적화 작업을 합니다
+   2) HBM 개발 과정에서 Foundry 업체와 기술 점검 및 협의 회의 운영 관리합니다
+   3) HBM 개발과 연계된 Advanced Package 기반 PKG Outsourcing 운영 및 관리합니다
+⑦ HBM Foundry PI
+       #이천 #Expert
+
+
+
+
+  학력은 학사 이상이며, 반도체/전자/전기/물리 등 공학 계열 전공자인 분
+  아래 역량 중 하나 이상을 보유하고 있으며, 경력 5년 이상 이신 분
+  기술개발
+   1) Foundry 공정 또는 Fabless 환경에서 PDK/DFM/Design Rule 관련 실무
+     경험 보유자
+   2) Calibre, Pegasus, ICV등 DRC/DRM Tool 활용 경험 보유자
+   3) Foundry Design/배치 역량 보유자
+  제품개발
+   1) DRAM Process 이해도 : Cell/Peri 공정 Process flow의 해박한 지식
+   2) Logic Process 이해도 : FINFET,GAA등 선단 공정 구조 및 Process 전문가
+   3) Foundry Partner사(외부)는 물론 설계/Test/PKG(내부) 사이에서
+     기술적 쟁점을 조율할 수 있는 역량
+  Interface
+    1) Foundry Partner사(외부)는 물론 설계/Test/PKG(내부) 사이에서 기술적
+      쟁점을 조율할 수 있는 역량
+    2) Design House 및 외주 파트너와의 기술 interface 역량
+
+
+
+  Foundry 업체 근무 경력자 중 TD(Technology Development) 또는
+  PI(Process Integration) 경험자
+  글로벌 협업이 가능한 우수한 외국어(영어) 커뮤니케이션 역량 보유자
+  기술개발
+   1) Advanced Node (5nm 이하) 또는 EUV 공정 경험 보유자
+   2) HBM, Chiplet, 25D/3D등 Advanced Packaging 연계 DRM 경험 보유자
+  제품개발
+   Logic Advanced node TD(Technology Development) 또는 PI(Process
+   Integration) 경험자 혹은 DRAM Process integration 경험자
+  Interface
+    Foundry Interface 업무 수행 중 CE(Customer Engineering) 경험 보유자
+⑧ HBM Product Engineering
+    #이천 #Junior & Expert
+
+
+
+
+  HBM Product Solution은 HBM 제품 개발 Product Engineering(Wafer &
+  Package Test) 업무부터 고객 SiP(System in Package) ATE 검증 및 고객
+  대응까지 HBM 개발 Back-End Process 전반에 대한 업무를 하고 있습니다.
+  최근엔, Custom HBM으로 영역을 확장하면서 Logic Test도 하고 있습니다.
+
+
+
+
+  Wafer/Package Test (DRAM Cell 및 Speed Test)에 대한 Baseline을 구축해
+  서 HBM 제품을 평가/검증합니다.
+  구축된 Baseline을 기반으로 수율 향상/Test Time 단축 등의 양산성 향상과
+  품질 불량 분석 및 Screen 방안 도출 등의 품질 개선 업무도 하고 있어요
+  고객 불량에 대해서 불량 분석을 진행하거나 고객에 Solution 및 기술적 지
+  원을 제공하는 등의 고객 대응 업무도 하고 있습니다.
+
+
+
+
+ 학력은 4년제 이상이며, 반도체/전자/전기/컴퓨터 공학 등 공학 계열 전공자인 분
+ 아래의 역량이 있으신 분
+ 1) Wafer/Package Level의 Test 경험
+ 2) DRAM 공정/설계 전반에 대한 지식 보유
+ 3) DRAM 특성 검증, 불량 분석 등의 업무 경험
+
+
+
+
+  1) HBM 제품에 대한 개발 경험이나 이해도가 있는 분
+  2) DRAM 제품에 대한 개발 경험이나 이해도가 있는 분
+  3) 고객 대응 업무를 위한 어학 능력이 있는 분
+⑨ HBM LogicDieTest/Silicon 양산성검증
+    #이천 #Junior & Expert
+
+
+
+
+ HBM Product Solution은 HBM 제품 개발 Product Engineering(Wafer &
+ Package Test) 업무부터 고객 SiP(System in Package) ATE 검증 및 고객
+ 대응까지 HBM 개발 Back-End Process 전반에 대한 업무를 하고 있습니다.
+ 최근엔, Custom HBM으로 영역을 확장하면서 Logic Test도 하고 있습니다.
+
+
+
+
+ SoC Test 직무의 경우는 자사와 고객 IP에 대한 Test Solution을 확보하고 이
+ 에 맞는 Test Baseline을 구축합니다
+ Hard/Soft IP Silicon Test를 하고 WF Level ATE Validation을 진행합니다
+ FW/SoC 검증 직무 같은 경우 Logic SoC Application Level의 Silicon Test를
+ 진행하고, 설계 검증/Silicon Test를 위한 Firmware를 검토/제작/검증 합니다
+
+
+
+
+ 학력은 4년제 이상이며, 반도체/전자/전기/컴퓨터 공학 등 공학 계열 전공자인 분
+ 아래의 역량이 있으신 분
+ 1) SoC test 직무 : SoC/Foundry 제품 Test/DFT 경험(V93K, uFlex 사용 가능자),
+   Logic 제품이나 DRAM 불량 분석/수율 개선 경험있는 분 (ie Yield Explorer)
+ 2) FW/SoC 검증 직무 : Logic SoC Application Level 의 Silicon Test나 설계 검증,
+   Firmware 개발/검증 경험있는 분
+
+
+
+
+ 1) HBM 제품에 대한 개발 경험이나 이해도가 있는 분
+ 2) DRAM 제품에 대한 개발 경험이나 이해도가 있는 분
+ 3) 고객 대응 업무를 위한 어학 능력이 있는 분
+⑩ Application Engineering
+    #이천 #Junior & Expert
+
+
+
+
+  HBM Product Solution은 HBM 제품 개발 Product Engineering(Wafer &
+  Package Test) 업무부터 고객 SiP(System in Package) ATE 검증 및 고객
+  대응까지 HBM 개발 Back-End Process 전반에 대한 업무를 하고 있습니다.
+  최근엔, Custom HBM으로 영역을 확장하면서 Logic Test도 하고 있습니다
+
+
+
+ 고객의 System을 대변할 수 있는 실장 평가 환경을 구축하고, 이 환경에서
+ 제품의 특성 등을 검증하거나 불량 분석을 통한 Solution을 도출/제공하는
+ 역할을 합니다
+ 고객 Site에서 제품 검증 중에 발생한 Issue에 대해서 기술적 대응을 하고,
+ 필요한 경우에는 현지(주로 미주)의 Open Lab을 통해 분석/검증을 지원하
+ 기도 합니다
+ 신규 제품 개발을 대비해서 차세대 Application Test Platform 구축을 위한
+ 방안을 검토하고 준비합니다
+
+
+
+  학력은 4년제 이상이며, 반도체/전자/전기/컴퓨터 공학 등 공학 계열 전공자인 분
+  아래의 역량이 있으신 분
+   1) System Level Signal Integrity, SI Modeling, De-Embedding 경험
+   2) System Bootloader, BIOS on ARM and Board Support Package
+      Software on Silicon 지식을 보유
+   3) 고객 대응 및 제품 검증 Support 경험
+
+
+
+  1) HBM 제품에 대한 개발 경험이나 이해도가 있는 분
+  2) DRAM 제품에 대한 개발 경험이나 이해도가 있는 분
+  3) Application System 분석 Debugging 경험자
+  4)고객 대응 업무를 위한 어학 능력이 있는 분
+

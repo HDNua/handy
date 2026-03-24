@@ -1,0 +1,19 @@
+
+
+AMMPG(Active Mode Memory Power Gating)은,
+function block (또는 power domain)의 memor가 PGM (Power Gating Mode)인 설계에서,
+memory leakage power reduction 을 위해 power-on 인 동작 상태에서
+동작 시나리오에 따라 사용하지 않는 memory를 power-down state 로 제어하는 설계 scheme 을 의미한다.
+
+
+AMMPG 라는 용어는 SOC설계팀 에서 먼저 사용하였다.
+SOC설계팀에서는 BUS slave 인 IP 에 대해 BUS event 로부터 해당 memory 들을 power-on 하고
+block 동작 완료 시 power-down(또는 retention mode) 전환하는 방식으로 적용하고 있다고 한다.
+
+
+Project5 까지는 SW-driven AMMPG 만을 지원했으나
+Project6 부터는 HW-driven AMMPG 를 지원하기 시작했다고 한다.
+
+Quick-sleep signal 에 연동하여 PGM 의 state 가 변경될 수 있도록 하며
+quick-sleep 구간에서 추가로 memory leakage power reduction 효과를 얻는다.
+이 기능을 QSMPG(Quick-sleep Memory Power Gating) 이라고 한다.

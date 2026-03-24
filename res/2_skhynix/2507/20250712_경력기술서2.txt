@@ -1,0 +1,24 @@
+[Modem TOP, Block, Register 검증]
+기간: 2018-04 ~ 2025-07
+성과: Xcelium, VCS 기반 검증 수행, Register Test에서 VCS 병렬성을 활용하여 bench 수정, 이후 기존 12~16h 이던 Sim 시간을 2h 이내로 단축
+기술: UVM, SystemVerilog, Python, Shell, VCS, Xcelium
+
+[Virtual Platform - C++ 기반 Modem Model 검증 환경]
+기간: 2024-03 ~ 2024-12
+성과: VP 입력 parser, Interrupt & DataMover checker 개발, Jira 자동화, FileSystem API 포함 전체 검증 환경 개발. Bitmap 기반 waveform 시각화로 Latch 버그 1건 탐지하여 수정
+기술: C++, FileSystem, GUI
+
+[Register Functional Coverage]
+기간: 2024-10 ~ 2025-06
+성과: Vector의 Register 조합 사전 검사로 미검증 시나리오 탐지 도구 개발, Test 시나리오 정의 및 TDD 환경 구축으로 유지보수 시간 50% 이하 달성, 1건의 RTL bug 탐지하여 보고
+기술: Python, TDD
+
+[AI based Workflow Assist]
+기간: 2024-01 ~ 2024-11
+성과: Ollama 활용한 Local LLM 환경 구축, RAG 활용 RISC-V CPU 코드 생성기 개발. AI based Perl 2 Python 번역기를 구현하여 DM checker script 변환, 이후 유지보수 시간 50% 이하 달성
+기술: AI, LLM, RAG, Python, Perl, RISC-V
+
+[Automated LLS Transfer]
+기간: 2023-07 ~ 2023-11
+성과: Windows->VWP 파일 전송 자동화 시스템 구축, LLS 전달 지연 시간 10분 이내로 고정 (24시간 상시)
+기술: C#, WinForm, Python, Shell

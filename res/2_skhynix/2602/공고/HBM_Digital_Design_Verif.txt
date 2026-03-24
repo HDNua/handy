@@ -1,0 +1,25 @@
+③ HBM Digital Design(검증)
+   #이천 #Junior & Expert
+
+SK hynix HBM의 초격차 경쟁력 확보를 위해 Analog-Digital Mixed IP, Digital IP
+및 Subsystem/Top Level 검증 업무를 맡고 있는 조직입니다. HBM 제품 개발
+과정에서 설계 무결성 확보를 목표로 설계 검증 전반을 담당하며 이를 위한 검증 시스템
+및 환경 구축, 검증 모델 개발 등의 업무를 수행합니다.
+
+ HBM Digital Design 검증 업무
+ 1) HBM 내 In-house, 3rd Party Digital IP 및 Mixed 설계 검증을 하고 있습니다
+ 2) 검증을 위한 In-house VIP 개발 및 3rd Parity VIP 도입 및 활용하고 있습니다
+ 3) UVM 기반의 검증 환경 구성 및 Test Case 개발을 하고 있습니다
+ 4) Regression Test 통한 Code/Func. Coverage Closure를 하고 있습니다.
+
+ 학력은 학사 이상이며, 반도체/ 전자/ 전기/ 컴퓨터 등 공학 계열 전공자인 분
+ 아래의 역량을 보유 하고 있으며, 경력 4년 이상 보유자
+ (석/박사 학위 수학 기간 인정)
+   1) SystemVerilog/UVM VIP, Testbench 및 Test Case 개발 역량
+   2) Digital IP Spec. 기반으로 검증 계획 수립 및 검증 프로세스 이해 역량
+   3) Code/Func. Coverage Closure
+
+- Full-Chip Mixed-Level Design (Schematic & RTL) 검증
+- D2D,PCIe, CXL 등 Host Interface IP 및 Subsystem 검증
+- SoC 주요 IP 들 (Memory Controller, HW Accelerator, BUS 등) 검증
+- Co-emulation (Emulation, Simulation 연동) 검증

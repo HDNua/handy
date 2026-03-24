@@ -1,0 +1,3 @@
+그룹 내 AI Seminar를 통해 AI 업계 현황, ChatGPT & DS LLM 사용 가이드, Ollama 사내 활용 가이드를 부서원에게 공유하였고, 업계 현황 파악에 도움이 되는 책도 추천하였습니다.
+VWP 내 Ollama를 도입하여 AI 업무 수행의 기반을 마련하고, DM checker에 대해 Perl-Python conversion을 수행하여 check script의 유지/보수 안정성을 높였습니다.
+RISC-V 기반 CPU의 검증을 위해 LLM을 응용하는 시도를 해보았습니다. RAG + LangChain 등의 AI 관련 기술을 적용하였으며, Modem Architecture Bi-Weekly 에서 발표하였습니다.

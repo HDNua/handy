@@ -1,0 +1,92 @@
+2025 승격
+
+한도영 | Engine검증 | doyoung.han
+경력개발단계 : CL2
+직무 : 연구개발(JFG) > Engineer III, 디지털 IP/회로 검증
+
+업무성과 : 27.55/50점
+공통역량(역량진단) : 25.2/30점
+가감점 : 1.5점
+
+어학/시상/징계/자격/특허
+어학 : 1.5점
+시상 : 0점
+징계 : 0점
+자격 : 0점
+특허 : 0점
+
+ㅡㅡㅡㅡㅡ
+[재료]
+
+1. Tx_SymbProc block sim verification
+1.1) Tx_SymbProc_NR_Crc document 작성
+2. MWG block sim verification
+2.1) MWG block sim Hardware Verification Document 작성
+3. Modem TOP sim verification
+3.1) Regression script 유지보수
+3.2) SFR test 진행 및 VCS migration을 통한 성능 개선
+3.3) Report script 유지보수
+3.4) Top port autoconnection tool
+4. LD integration
+5. Automated LLS Transfer System Development
+5.1) 자동화된 파일 전송을 통한 FTP 구현
+6. C++ base의 Virtual Platform Checker & Environment Development
+6.1) Interrupt Count Checker
+6.2) DataMover Checker
+6.3) Interrupt Sequence Checker
+6.4) RTL Simulation Log Parser
+6.5) Bitmap Waveform Viewer
+6.6) Asset Updater
+6.7) Windows-Linux-WSL FileSystem Interface
+6.8) Formatted String Library를 포함한 다양한 유틸리티 함수 지원
+7. RISC-V code generator with LLMs to torture CPU
+7.1) Ollama+RAG+LangChain 결합한 초기 모델 제안
+7.2) Ollama+LLM 등 AI 작업을 위한 환경 셋업
+8. LLS Functional Coverage
+8.1) Functional Coverage check implementation
+8.2) 위 기능 동작 검증을 위한 테스트 및 시나리오 작성 
+
+
+
+ㅡㅡㅡㅡㅡ
+1) 기술 분석(3) : 도메인에 대한 지식을 바탕으로 고객 요구사항 및 설계 spec을 분석할 수 있다.
+> Virtual Platform 개발 당시 설계자의 요구와 spec을 분석하여 Checker 구현을 완료했습니다. 나아가 Simulation Log Parser를 통한 VP input generation, Bitmap Waveform Viewer를 통한 dump readability 향상, FileSystem Interface를 통한 Cross-platform 환경 제공, Jira Report 기능을 통한 자동화된 report 등 다양한 기능을 제공함으로써 요구사항 변경에 매우 유연하게 대응하는 생태계를 만들었습니다.
+.
+.
+2) 요구 수준 분석(2) : 도메인에 대한 지식을 바탕으로 고객 요구사항 및 설계 spec을 분석한 후 검증 항목을 도출할 수 있다.
+> Virtual Platform Checker를 구현하면서 다양한 형태의 검증 항목을 도출하였습니다. Interrupt 개수가 맞지 않는 Error, Null 주솟값 검사, Spec에 없는 Address, RTL-VP 간 Data Mismatch, 검사되지 않은 RTL 또는 VP 데이터와 같은 DataMover error를 생각했고 이를 검사하는 로직을 추가하였습니다.
+.
+.
+3) 기술 문서 작성(15) : 검증 기술 문서(vPlan, vReport)를 필요한 언어로 정확하게 작성할 수 있다.
+> Tx_SymbProc, MWG block sim에 대한 Hardware Verification Document를 작성하였습니다. Virtual Platform 환경, LLS Functional Coverage 등에 대해 Confluence에 검증 방법 및 history를 주기적으로 업데이트 하고 있으며, 필요 시 PPT와 세미나를 통해 직접 가이드 합니다.
+.
+.
+4) 검증 계획 작성(3) : 고객 요구사항 및 설계 spec을 기반으로 인력 운영 계획을 포함한 검증 계획을 세울 수 있다.
+> Tx_SymbProc 및 MWG block sim 시작 전에 검증 계획을 설계 담당자와 공유하고, 해당 일정에 맞게 검증을 진행하였습니다. 부재 시 검증이 원활하게 진행될 수 있도록 문서화와 가이드를 Confluence와 EDM에 틈틈이 기록했습니다. Automated LLS Transfer System을 개발함으로써 LLS와 TC 전송이 항상 원활히 진행되도록 하였습니다.
+.
+.
+5) 검증 시나리오 작성(1) : 주어진 요구 사항을 이해하고, 세부 기능 및 성능 검증을 위한 검증 시나리오를 작성할 수 있다.
+> LLS Functional Coverage Check 구현을 진행하면서 검증 시나리오를 작성하였습니다. 기본 케이스, 2CORE, NSA, ITERATOR, ITERATOR WITH KEY와 같은 다양한 시나리오를 만들었습니다. Virtual Platform 환경 구현 작업 당시에 Cross-platform FileSystem Interface 개발을 진행하면서 Unit Test를 작성하고 활용하여 안전성을 높였습니다.
+.
+.
+6) 검증 환경 구축(1) : MDV(Metric Driven Verification) 기반 랜덤 검증 환경을 구축할 수 있으며, 디지털 IP/회로 설계에 필요한 검증 환경을 제공할 수 있다.
+> SFR Test와 같은 랜덤 검증 환경에 대한 테스트를 진행하였습니다. Register에 random 값과 그 반전 값을 넣어보며 R/W operation에 이상이 없는지를 검증합니다. Reset value test, Basic R/W test, Bayes test, MWG test와 같은 다양한 register test를 수행했습니다.
+.
+.
+7) 검증용 IP 개발(1) : 검증에 필요한 VIP(Verification IP, Reference Model, Self-Checker) 및 Interface Host Model 등을 개발할 수 있다.
+> Virtual Platform 환경의 checker를 개발하였습니다. Interrupt Count Checker, DataMover Checker, Interrupt Sequence Checker와 같은 checker를 구현하였습니다. QuickSleep LowPower 검증을 위한 Checker IP를 구현하여 TOP sim 환경에 적용하였으며 simulation 및 debugging 진행하였습니다.
+.
+.
+8) 시뮬레이션을 통한 검증(2) : 시뮬레이션 도구들을 활용하여 디지털 IP/회로 설계 완료 이전에 사전 검증을 수행하고, 위험을 최소화 할 수 있다.
+> Cadence 사의 Xcelium & Simvision, Synopsys 사의 VCS & Verdi 활용하여 검증과 디버깅을 진행해왔습니다. Tx_SymbProc, MWG, SFR Test, Modem TOP sim 등 다양한 환경에서 위 도구를 활용하여 사전 검증을 수행했습니다. Virtual Platform 환경에서 Bitmap Waveform Viewer를 자체 개발함으로써 사전에 latch bug를 찾는 등 위험을 최소화하고 있습니다.
+.
+.
+9) 디지털 동작 검증(1) : 디지털 회로에 대해 구비된 벡터(Vector)로 동작 검증 시뮬레이션을 수행하고 디버깅을 진행할 수 있다.
+> Modem TOP sim과 Block sim 등 다양한 환경에서 Vector 기반 검증 시뮬레이션을 수행하고 디버깅을 진행했습니다. Block sim의 경우 Tx_SymbProc block 검증을 2년 이상 수행했고, 이후 MWG block 검증과 Modem TOP 검증을 담당하고 있습니다. MWG vector 생성 옵션 변경을 통해 disk usage와 simulation time을 개선하였습니다.
+.
+.
+10) 문제점 분석(1) : 디지털 IP/회로의 내부 기능 또는 동작 상태를 디버깅 하여 문제 원인을 찾고 개선 방안을 도출할 수 있다.
+> Modem TOP sim과 Block sim, SFR Test, Virtual Platform 등 다양한 환경에서 검증을 수행하고 디버깅을 진행했습니다. SFR test의 경우 job 단위를 개별 Register File로 분리하는 개선을 통해 검증 시간을 크게 감소시켰습니다. Block sim의 경우 Tx_SymbProc 검증을 2년 이상 수행했고, 이후 MWG block 검증과 Modem TOP 검증을 담당하고 있습니다.
+.
+.
+.

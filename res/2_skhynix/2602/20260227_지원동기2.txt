@@ -1,0 +1,8 @@
+[지원 동기]
+8년간 삼성전자에서 UVM/SystemVerilog 기반으로 Modem Engine의 Block/TOP 레벨 검증을 담당해왔습니다. Testbench 구성부터 In-house VIP 개발, Regression 운영, Coverage Closure까지 검증 전 과정을 직접 수행해왔으며, 자동화 도구 개발을 통해 HW/SW hybrid형 검증 엔지니어로 성장했습니다. SK하이닉스 'HBM Digital Design 검증' 공고를 보며, 제가 매일 해온 일이 적혀 있다고 느꼈습니다. 특히 DataMover(DMA) IP 검증을 통해 쌓은 메모리 인터페이스 검증 경험이, HBM의 설계 무결성 확보에 직접 기여할 수 있다는 확신이 지원의 결정적 이유입니다.
+
+[향후 계획]
+학부 시절(GPA 4.33, 과수석 3회, 대회 우승 2회)부터 증명된 학습 역량과, 삼성전자에서 Modem TOP sim 주도, QSLP/HWMPG VIP 개발, Coverage Closure 달성 등 난이도 높은 과제들을 완수해온 실적을 바탕으로 HBM 환경에 즉시 적응하겠습니다. 입사 직후 HBM Testbench 구조와 Digital IP Spec을 신속히 파악하여 팀에 즉시 투입 가능한 전력이 되겠습니다. 나아가 검증 자동화 역량을 바탕으로 상시 Regression 환경을 구축하고, Coverage Closure 효율을 높여 조직의 검증 생산성을 극대화하겠습니다.
+
+[전 직장 퇴사 동기]
+Modem Engine에서 DataMover(DMA) IP와 Memory Power Gating 검증을 수행하며, 메모리 인터페이스 검증에 관심이 깊어졌습니다. 이 역량이 가장 직접적으로 적용될 수 있는 곳이 HBM Digital Design 검증이라 판단했습니다. 삼성전자에서 얻은 기술력과 경험을 바탕으로, SK하이닉스에서 더 큰 임팩트를 만들겠습니다.

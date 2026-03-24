@@ -1,0 +1,12 @@
+{
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.cwd": "${workspaceFolder}/res/1_samsung/dm/scripts/dm_test",
+    "python.testing.pytestArgs": [
+        "dev/tests"
+    ],
+    "python.defaultInterpreterPath": "${workspaceFolder}/res/1_samsung/dm/scripts/dm_test/dev/venv311/bin/python",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/res/1_samsung/dm/scripts/dm_test/dev/src"
+    ]
+}
