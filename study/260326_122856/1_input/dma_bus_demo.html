@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DMA / Bus Interactive Demo</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --panel:#131a2e;
+    --panel2:#18213c;
+    --text:#eaf0ff;
+    --muted:#aab5d6;
+    --line:#41527f;
+    --line-dim:#2a3554;
+    --accent:#6ea8ff;
+    --good:#55d38a;
+    --warn:#ffca5c;
+    --hot:#ff7a7a;
+    --bus:#8c7bff;
+    --shadow:0 10px 30px rgba(0,0,0,.25);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+    background:linear-gradient(180deg,#09101d,#0e1528 40%,#0b1020);
+    color:var(--text);
+  }
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:24px;
+  }
+  h1{
+    margin:0 0 10px;
+    font-size:28px;
+  }
+  .sub{
+    color:var(--muted);
+    margin-bottom:20px;
+    line-height:1.6;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    gap:20px;
+  }
+  .panel{
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid #223156;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+  }
+  .controls{
+    padding:18px;
+  }
+  .controls h2, .legend h2, .explain h2{
+    margin:0 0 12px;
+    font-size:18px;
+  }
+  .btns{
+    display:grid;
+    gap:10px;
+  }
+  button{
+    width:100%;
+    border:1px solid #2d447a;
+    background:#162344;
+    color:var(--text);
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:15px;
+    cursor:pointer;
+    transition:.15s transform,.15s background,.15s border-color;
+  }
+  button:hover{ transform:translateY(-1px); background:#1b2c55; border-color:#4a6bc0; }
+  button.active{ background:#29458a; border-color:#82a5ff; }
+  .small{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+    margin-top:10px;
+  }
+  .legend, .explain{
+    padding:18px;
+    margin-top:16px;
+  }
+  .chips{
+    display:flex; flex-wrap:wrap; gap:8px;
+  }
+  .chip{
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid #33476f;
+    background:#121b33;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .chip .dot{
+    display:inline-block;
+    width:10px; height:10px; border-radius:50%;
+    margin-right:6px; vertical-align:-1px;
+  }
+  .stage{
+    position:relative;
+    min-height:760px;
+    overflow:hidden;
+    padding:18px;
+  }
+  svg{
+    width:100%;
+    height:724px;
+    display:block;
+  }
+  .node{
+    fill:#14203b;
+    stroke:#38528f;
+    stroke-width:2;
+    rx:18;
+    ry:18;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,.2));
+  }
+  .node.bus{
+    fill:#1d1948;
+    stroke:#7a6dff;
+  }
+  .node.mem{
+    fill:#193226;
+    stroke:#4dbf7c;
+  }
+  .node.cpu{
+    fill:#38221d;
+    stroke:#ff9d6f;
+  }
+  .node.ip{
+    fill:#1c243f;
+    stroke:#6b8ade;
+  }
+  .node.dma{
+    fill:#1f2438;
+    stroke:#ffd56a;
+  }
+  .title{
+    font-size:20px;
+    font-weight:700;
+    fill:#f6f8ff;
+  }
+  .subtitle{
+    font-size:13px;
+    fill:#b7c3e3;
+  }
+  .line{
+    stroke:var(--line-dim);
+    stroke-width:6;
+    stroke-linecap:round;
+    fill:none;
+    opacity:.9;
+  }
+  .line.bus{ stroke:#5040b8; stroke-width:8; }
+  .line.active{
+    stroke-width:10;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,.2));
+    stroke-dasharray:18 14;
+    animation: dash 1.1s linear infinite;
+  }
+  .line.active.cpu{ stroke:var(--hot); }
+  .line.active.dma{ stroke:var(--warn); }
+  .line.active.busx{ stroke:var(--bus); }
+  .line.active.mem{ stroke:var(--good); }
+  @keyframes dash {
+    to { stroke-dashoffset:-32; }
+  }
+  .payload{
+    font-size:14px;
+    fill:#dfe6ff;
+  }
+  .payloadBox{
+    fill:#10172a;
+    stroke:#3d4d76;
+    rx:12; ry:12;
+  }
+  .banner{
+    position:absolute;
+    left:18px; right:18px; bottom:18px;
+    border:1px solid #2a3b63;
+    background:rgba(14,20,38,.85);
+    border-radius:16px;
+    padding:16px 18px;
+    backdrop-filter: blur(8px);
+  }
+  .bannerTitle{
+    font-size:18px; font-weight:700; margin-bottom:6px;
+  }
+  .bannerText{
+    color:var(--muted); line-height:1.7;
+  }
+  .mono{
+    font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:13px;
+  }
+  .callout{
+    border:1px solid #30446e;
+    background:#10182d;
+    border-radius:12px;
+    padding:12px;
+    margin-top:10px;
+    color:var(--muted);
+    line-height:1.65;
+  }
+  .em{ color:#fff; }
+  .kbd{
+    display:inline-block;
+    border:1px solid #43598d;
+    background:#18274c;
+    padding:1px 8px;
+    border-radius:8px;
+    font-size:12px;
+    color:#dbe7ff;
+  }
+  @media (max-width: 980px){
+    .grid{ grid-template-columns:1fr; }
+    .stage{ min-height:820px; }
+    svg{ height:780px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>DMA / Bus / DRAM 감각 잡기</h1>
+  <div class="sub">
+    버튼을 눌러서 <b>CPU가 직접 옮기는 경우</b>와 <b>DMA가 버스를 타고 DRAM에 쓰는 경우</b>를 비교해보세요.
+    아래 그림은 <b>개념을 직관적으로 보여주기 위한 단순화</b>입니다.
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="panel controls">
+        <h2>모드 선택</h2>
+        <div class="btns">
+          <button id="btn1" class="active">1) CPU가 직접 복사</button>
+          <button id="btn2">2) DMA가 DRAM에 전송</button>
+          <button id="btn3">3) 버스 주소/라우팅 보기</button>
+          <button id="btn4">4) RO Register 방식 보기</button>
+        </div>
+        <div class="small">
+          핵심:
+          <br>• CPU 직접 복사 = <span class="em">IP → CPU → BUS → DRAM</span>
+          <br>• DMA 사용 = <span class="em">IP → DMA → BUS → DRAM</span>
+          <br>• 버스 = <span class="em">주소 + 데이터 + 제어 + 핸드셰이크</span>
+        </div>
+      </div>
+
+      <div class="panel legend">
+        <h2>범례</h2>
+        <div class="chips">
+          <div class="chip"><span class="dot" style="background:#ff7a7a"></span>CPU가 하는 일</div>
+          <div class="chip"><span class="dot" style="background:#ffca5c"></span>DMA가 하는 일</div>
+          <div class="chip"><span class="dot" style="background:#8c7bff"></span>버스 경로</div>
+          <div class="chip"><span class="dot" style="background:#55d38a"></span>DRAM 저장</div>
+        </div>
+        <div class="callout">
+          <b>입문용 감각</b><br>
+          지금 문맥에서는 버스를 거의 <span class="em">주소 기반 접근 통로</span>로 보면 됩니다.
+          즉 누군가가 <span class="kbd">addr</span>, <span class="kbd">data</span>, <span class="kbd">write/read</span>,
+          <span class="kbd">valid/ready</span> 같은 신호를 내보내며 공용 통로를 쓰고 있으면,
+          "아 이게 버스구나"라고 느끼면 됩니다.
+        </div>
+      </div>
+
+      <div class="panel explain">
+        <h2>짧은 해설</h2>
+        <div id="sideText" class="small" style="font-size:14px; line-height:1.7; color:#c3d0f0;">
+          CPU가 IP의 데이터를 읽고 다시 DRAM에 써주는 그림입니다. 되긴 되지만, 데이터가 크면 CPU가 단순 복사 노동을 많이 하게 됩니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="panel stage">
+      <svg viewBox="0 0 900 724" xmlns="http://www.w3.org/2000/svg" aria-label="DMA Bus Demo">
+        <!-- base lines -->
+        <path id="l_ip_cpu" class="line" d="M 170 170 L 360 170" />
+        <path id="l_cpu_mem" class="line" d="M 500 170 L 740 170" />
+
+        <path id="l_ip_dma" class="line" d="M 170 170 L 170 360 L 360 360" />
+        <path id="l_dma_bus" class="line" d="M 500 360 L 500 520 L 620 520" />
+        <path id="l_bus_mem" class="line bus" d="M 740 455 L 740 280" />
+
+        <path id="l_cpu_bus" class="line" d="M 500 170 L 540 170 L 540 520 L 620 520" />
+        <path id="l_dma_reg_bus" class="line" d="M 430 430 L 430 520 L 620 520" />
+
+        <path id="l_ip_ro_cpu" class="line" d="M 170 560 L 300 560 L 300 170 L 360 170" />
+        <path id="l_cpu_ro_mem" class="line" d="M 500 170 L 740 170" />
+
+        <!-- nodes -->
+        <rect class="node ip" x="40" y="110" width="130" height="120"/>
+        <text class="title" x="105" y="155" text-anchor="middle">IP</text>
+        <text class="subtitle" x="105" y="183" text-anchor="middle">data producer</text>
+
+        <rect class="node cpu" x="360" y="110" width="140" height="120"/>
+        <text class="title" x="430" y="155" text-anchor="middle">CPU</text>
+        <text class="subtitle" x="430" y="183" text-anchor="middle">제어 / 판단 / 복사</text>
+
+        <rect class="node dma" x="360" y="300" width="140" height="120"/>
+        <text class="title" x="430" y="345" text-anchor="middle">DMA</text>
+        <text class="subtitle" x="430" y="373" text-anchor="middle">전용 전송 엔진</text>
+
+        <rect class="node bus" x="620" y="455" width="120" height="130"/>
+        <text class="title" x="680" y="505" text-anchor="middle">BUS</text>
+        <text class="subtitle" x="680" y="533" text-anchor="middle">addr/data/ctrl</text>
+        <text class="subtitle" x="680" y="554" text-anchor="middle">valid/ready</text>
+
+        <rect class="node mem" x="740" y="110" width="120" height="170"/>
+        <text class="title" x="800" y="160" text-anchor="middle">DRAM</text>
+        <text class="subtitle" x="800" y="190" text-anchor="middle">SW가 나중에 확인</text>
+        <text class="subtitle" x="800" y="212" text-anchor="middle">큰 버퍼 저장</text>
+
+        <rect class="node ip" x="40" y="500" width="130" height="120"/>
+        <text class="title" x="105" y="545" text-anchor="middle">IP</text>
+        <text class="subtitle" x="105" y="573" text-anchor="middle">RO Register 노출</text>
+
+        <!-- payload boxes -->
+        <rect id="p1" class="payloadBox" x="225" y="135" width="110" height="48"/>
+        <text id="pt1" class="payload" x="280" y="164" text-anchor="middle">data chunk</text>
+
+        <rect id="p2" class="payloadBox" x="548" y="335" width="125" height="48"/>
+        <text id="pt2" class="payload" x="610" y="364" text-anchor="middle">burst write</text>
+
+        <rect id="p3" class="payloadBox" x="250" y="528" width="120" height="48"/>
+        <text id="pt3" class="payload" x="310" y="557" text-anchor="middle">reg read x N</text>
+
+        <!-- bus address note -->
+        <rect id="addrBox" class="payloadBox" x="560" y="605" width="260" height="76"/>
+        <text class="payload mono" x="580" y="632">addr = 0x8000_1000</text>
+        <text class="payload mono" x="580" y="654">data = 0x1234_5678</text>
+        <text class="payload mono" x="580" y="676">ctrl = WRITE, valid = 1</text>
+      </svg>
+
+      <div class="banner">
+        <div id="bannerTitle" class="bannerTitle">1) CPU가 직접 복사 (CPU = bus master)</div>
+        <div id="bannerText" class="bannerText">
+          IP → CPU → BUS → DRAM 경로입니다. CPU도 버스를 통해 DRAM에 씁니다.
+          DMA와 차이는 "버스를 쓰냐 마냐"가 아니라 "누가 버스를 drive하냐"입니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const els = {
+  btn1: document.getElementById('btn1'),
+  btn2: document.getElementById('btn2'),
+  btn3: document.getElementById('btn3'),
+  btn4: document.getElementById('btn4'),
+  sideText: document.getElementById('sideText'),
+  bannerTitle: document.getElementById('bannerTitle'),
+  bannerText: document.getElementById('bannerText'),
+
+  l_ip_cpu: document.getElementById('l_ip_cpu'),
+  l_cpu_mem: document.getElementById('l_cpu_mem'),
+  l_ip_dma: document.getElementById('l_ip_dma'),
+  l_dma_bus: document.getElementById('l_dma_bus'),
+  l_bus_mem: document.getElementById('l_bus_mem'),
+  l_cpu_bus: document.getElementById('l_cpu_bus'),
+  l_dma_reg_bus: document.getElementById('l_dma_reg_bus'),
+  l_ip_ro_cpu: document.getElementById('l_ip_ro_cpu'),
+  l_cpu_ro_mem: document.getElementById('l_cpu_ro_mem'),
+
+  p1: document.getElementById('p1'),
+  p2: document.getElementById('p2'),
+  p3: document.getElementById('p3'),
+  pt1: document.getElementById('pt1'),
+  pt2: document.getElementById('pt2'),
+  pt3: document.getElementById('pt3'),
+  addrBox: document.getElementById('addrBox'),
+};
+
+function reset() {
+  [els.btn1, els.btn2, els.btn3, els.btn4].forEach(b => b.classList.remove('active'));
+  [
+    els.l_ip_cpu, els.l_cpu_mem, els.l_ip_dma, els.l_dma_bus, els.l_bus_mem,
+    els.l_cpu_bus, els.l_dma_reg_bus, els.l_ip_ro_cpu, els.l_cpu_ro_mem
+  ].forEach(l => {
+    l.classList.remove('active','cpu','dma','busx','mem');
+  });
+
+  els.p1.style.opacity = 0.25;
+  els.p2.style.opacity = 0.25;
+  els.p3.style.opacity = 0.25;
+  els.addrBox.style.opacity = 0.25;
+}
+
+function mode1() {
+  reset();
+  els.btn1.classList.add('active');
+  els.l_ip_cpu.classList.add('active','cpu');
+  els.l_cpu_bus.classList.add('active','cpu');
+  els.l_bus_mem.classList.add('active','cpu');
+  els.p1.style.opacity = 1.0;
+  els.sideText.innerHTML =
+    'CPU도 <b>버스를 통해</b> DRAM에 씁니다. CPU가 직접 bus master로 load/store를 수행합니다. 데이터가 크면 CPU가 단순 복사 노동에 시간을 많이 씁니다.';
+  els.bannerTitle.textContent = '1) CPU가 직접 복사 (CPU = bus master)';
+  els.bannerText.textContent =
+    'IP → CPU → BUS → DRAM 경로입니다. CPU가 bus master로서 직접 각 transaction을 발생시킵니다. DMA와 차이는 "버스를 쓰냐 마냐"가 아니라 "누가 버스를 drive하냐"입니다.';
+}
+
+function mode2() {
+  reset();
+  els.btn2.classList.add('active');
+  els.l_ip_dma.classList.add('active','dma');
+  els.l_dma_bus.classList.add('active','dma');
+  els.l_bus_mem.classList.add('active','busx','mem');
+  els.p2.style.opacity = 1.0;
+  els.addrBox.style.opacity = 1.0;
+  els.sideText.innerHTML =
+    'DMA가 전송 엔진 역할을 합니다. CPU는 보통 <b>src/dst/len/start</b> 같은 설정만 하고 빠지고, DMA가 버스를 타고 DRAM에 burst write 합니다.';
+  els.bannerTitle.textContent = '2) DMA가 DRAM에 전송';
+  els.bannerText.textContent =
+    'IP → DMA → BUS → DRAM 경로입니다. CPU는 감독, DMA는 운반 담당이라고 보면 됩니다. 대량 전송일수록 이 구조가 유리합니다.';
+}
+
+function mode3() {
+  reset();
+  els.btn3.classList.add('active');
+  els.l_cpu_bus.classList.add('active','cpu');
+  els.l_dma_reg_bus.classList.add('active','dma');
+  els.l_bus_mem.classList.add('active','busx');
+  els.addrBox.style.opacity = 1.0;
+  els.sideText.innerHTML =
+    '버스의 핵심은 <b>주소 기반 접근</b>입니다. 누군가가 <b>addr/data/ctrl</b>를 올리면, interconnect나 decoder가 그 주소를 보고 적절한 대상(DRAM, DMA reg, IP reg)으로 라우팅합니다.';
+  els.bannerTitle.textContent = '3) 버스 주소 / 라우팅 보기';
+  els.bannerText.textContent =
+    '“버스를 탄다”는 말은 그냥 데이터를 흘린다는 뜻이 아니라, 주소/제어/핸드셰이크를 포함한 transaction을 공용 통로에 올린다는 뜻입니다.';
+}
+
+function mode4() {
+  reset();
+  els.btn4.classList.add('active');
+  els.l_ip_ro_cpu.classList.add('active','cpu');
+  els.l_cpu_bus.classList.add('active','cpu');
+  els.l_bus_mem.classList.add('active','cpu');
+  els.p3.style.opacity = 1.0;
+  els.sideText.innerHTML =
+    'RO Register 방식은 SW가 레지스터를 여러 번 읽어서 데이터를 가져오는 그림입니다. CPU가 버스를 통해 IP reg를 읽고, 다시 버스를 통해 DRAM에 씁니다. <b>큰 burst 데이터</b>에는 비효율적입니다.';
+  els.bannerTitle.textContent = '4) RO Register 방식 (CPU = bus master, 반복)';
+  els.bannerText.textContent =
+    'IP가 결과를 RO Register로 노출하고, CPU가 reg read를 N번 반복한 뒤 다시 DRAM에 정리하는 방식입니다. CPU가 bus transaction을 수천 번 직접 발생시키므로 HW area와 SW MIPS 양쪽이 부담됩니다.';
+}
+
+els.btn1.addEventListener('click', mode1);
+els.btn2.addEventListener('click', mode2);
+els.btn3.addEventListener('click', mode3);
+els.btn4.addEventListener('click', mode4);
+
+mode1();
+</script>
+</body>
+</html>
