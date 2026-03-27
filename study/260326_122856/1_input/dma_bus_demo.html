@@ -3,457 +3,619 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>DMA / Bus Interactive Demo</title>
+<title>DMA / Bus / IRQ Interactive Demo</title>
 <style>
-  :root{
-    --bg:#0b1020;
-    --panel:#131a2e;
-    --panel2:#18213c;
-    --text:#eaf0ff;
-    --muted:#aab5d6;
-    --line:#41527f;
-    --line-dim:#2a3554;
-    --accent:#6ea8ff;
-    --good:#55d38a;
-    --warn:#ffca5c;
-    --hot:#ff7a7a;
-    --bus:#8c7bff;
-    --shadow:0 10px 30px rgba(0,0,0,.25);
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+  
+  :root {
+    --bg-dark: #0a0e17;
+    --panel-bg: rgba(20, 26, 41, 0.6);
+    --panel-border: rgba(69, 87, 126, 0.4);
+    --text-primary: #f0f4ff;
+    --text-muted: #9ba8c9;
+    --accent-blue: #4dabf7;
+    --accent-purple: #c58cf3;
+    --accent-green: #40c057;
+    --accent-yellow: #fcc419;
+    --accent-red: #ff6b6b;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
-    background:linear-gradient(180deg,#09101d,#0e1528 40%,#0b1020);
-    color:var(--text);
+
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: radial-gradient(circle at top right, #111a2f, #0a0e17);
+    color: var(--text-primary);
+    min-height: 100vh;
   }
-  .wrap{
-    max-width:1200px;
-    margin:0 auto;
-    padding:24px;
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 30px;
   }
-  h1{
-    margin:0 0 10px;
-    font-size:28px;
+
+  header {
+    margin-bottom: 24px;
+    text-align: center;
   }
-  .sub{
-    color:var(--muted);
-    margin-bottom:20px;
-    line-height:1.6;
+
+  h1 {
+    margin: 0 0 10px;
+    font-size: 32px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #4dabf7, #c58cf3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
-  .grid{
-    display:grid;
-    grid-template-columns: 320px 1fr;
-    gap:20px;
+
+  .sub {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
   }
-  .panel{
-    background:linear-gradient(180deg,var(--panel),var(--panel2));
-    border:1px solid #223156;
-    border-radius:18px;
-    box-shadow:var(--shadow);
+
+  .grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
   }
-  .controls{
-    padding:18px;
+
+  .panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
+    padding: 24px;
   }
-  .controls h2, .legend h2, .explain h2{
-    margin:0 0 12px;
-    font-size:18px;
+
+  h2 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
   }
-  .btns{
-    display:grid;
-    gap:10px;
+
+  .btns {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
-  button{
-    width:100%;
-    border:1px solid #2d447a;
-    background:#162344;
-    color:var(--text);
-    border-radius:12px;
-    padding:12px 14px;
-    font-size:15px;
-    cursor:pointer;
-    transition:.15s transform,.15s background,.15s border-color;
+
+  button {
+    background: rgba(43, 56, 86, 0.6);
+    border: 1px solid #3c4b71;
+    color: var(--text-primary);
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  button:hover{ transform:translateY(-1px); background:#1b2c55; border-color:#4a6bc0; }
-  button.active{ background:#29458a; border-color:#82a5ff; }
-  .small{
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.6;
-    margin-top:10px;
+
+  button:hover {
+    background: rgba(69, 87, 126, 0.8);
+    transform: translateX(4px);
   }
-  .legend, .explain{
-    padding:18px;
-    margin-top:16px;
+
+  button.active {
+    background: linear-gradient(90deg, rgba(77, 171, 247, 0.2), rgba(197, 140, 243, 0.2));
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(77, 171, 247, 0.3);
   }
-  .chips{
-    display:flex; flex-wrap:wrap; gap:8px;
+
+  button.active::after {
+    content: "●";
+    color: var(--accent-blue);
+    text-shadow: 0 0 8px var(--accent-blue);
   }
-  .chip{
-    padding:8px 10px;
-    border-radius:999px;
-    border:1px solid #33476f;
-    background:#121b33;
-    font-size:13px;
-    color:var(--muted);
+
+  .status-box {
+    margin-top: 24px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #d0d8ed;
+    border-left: 4px solid var(--accent-blue);
+    min-height: 100px;
   }
-  .chip .dot{
-    display:inline-block;
-    width:10px; height:10px; border-radius:50%;
-    margin-right:6px; vertical-align:-1px;
+
+  .step-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 14px;
   }
-  .stage{
-    position:relative;
-    min-height:760px;
-    overflow:hidden;
-    padding:18px;
+
+  .step-nav button {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 20px;
+    text-align: center;
+    justify-content: center;
+    flex-shrink: 0;
   }
-  svg{
-    width:100%;
-    height:724px;
-    display:block;
+
+  .step-nav button:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+    transform: none;
   }
-  .node{
-    fill:#14203b;
-    stroke:#38528f;
-    stroke-width:2;
-    rx:18;
-    ry:18;
-    filter: drop-shadow(0 8px 16px rgba(0,0,0,.2));
+
+  .step-indicator {
+    font-size: 13px;
+    color: var(--text-muted);
+    min-width: 60px;
+    text-align: center;
   }
-  .node.bus{
-    fill:#1d1948;
-    stroke:#7a6dff;
+
+  .seq-step {
+    display: none;
+    animation: fadeIn 0.4s ease forwards;
   }
-  .node.mem{
-    fill:#193226;
-    stroke:#4dbf7c;
+  
+  .seq-step.active {
+    display: block;
   }
-  .node.cpu{
-    fill:#38221d;
-    stroke:#ff9d6f;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .node.ip{
-    fill:#1c243f;
-    stroke:#6b8ade;
+
+  .legend {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
-  .node.dma{
-    fill:#1f2438;
-    stroke:#ffd56a;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-muted);
   }
-  .title{
-    font-size:20px;
-    font-weight:700;
-    fill:#f6f8ff;
+
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
   }
-  .subtitle{
-    font-size:13px;
-    fill:#b7c3e3;
+
+  .stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
   }
-  .line{
-    stroke:var(--line-dim);
-    stroke-width:6;
-    stroke-linecap:round;
-    fill:none;
-    opacity:.9;
+
+  svg {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
   }
-  .line.bus{ stroke:#5040b8; stroke-width:8; }
-  .line.active{
-    stroke-width:10;
-    filter: drop-shadow(0 0 10px rgba(255,255,255,.2));
-    stroke-dasharray:18 14;
-    animation: dash 1.1s linear infinite;
+
+  /* Node Styling */
+  .node-bg {
+    fill: rgba(22, 31, 51, 0.8);
+    stroke: var(--panel-border);
+    stroke-width: 2;
+    rx: 16;
+    ry: 16;
+    transition: all 0.3s ease;
   }
-  .line.active.cpu{ stroke:var(--hot); }
-  .line.active.dma{ stroke:var(--warn); }
-  .line.active.busx{ stroke:var(--bus); }
-  .line.active.mem{ stroke:var(--good); }
-  @keyframes dash {
-    to { stroke-dashoffset:-32; }
+  .node-cpu { stroke: var(--accent-purple); }
+  .node-dma { stroke: var(--accent-yellow); }
+  .node-mem { stroke: var(--accent-green); }
+  .node-ip  { stroke: var(--accent-red); }
+  .node-bus { stroke: var(--accent-blue); fill: rgba(14, 25, 46, 0.9); }
+
+  .node-text-title {
+    fill: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    pointer-events: none;
   }
-  .payload{
-    font-size:14px;
-    fill:#dfe6ff;
+  .node-text-sub {
+    fill: var(--text-muted);
+    font-size: 12px;
+    pointer-events: none;
   }
-  .payloadBox{
-    fill:#10172a;
-    stroke:#3d4d76;
-    rx:12; ry:12;
+
+  /* Line Styling */
+  .path-line {
+    fill: none;
+    stroke: rgba(255,255,255,0.1);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke 0.3s ease, opacity 0.3s ease;
+    opacity: 0.2;
   }
-  .banner{
-    position:absolute;
-    left:18px; right:18px; bottom:18px;
-    border:1px solid #2a3b63;
-    background:rgba(14,20,38,.85);
-    border-radius:16px;
-    padding:16px 18px;
-    backdrop-filter: blur(8px);
+
+  /* Animated Overlay Lines */
+  .path-flow {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 12 12;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
   }
-  .bannerTitle{
-    font-size:18px; font-weight:700; margin-bottom:6px;
+
+  .path-flow.active {
+    opacity: 1;
+    animation: flowAnim 1s linear infinite;
   }
-  .bannerText{
-    color:var(--muted); line-height:1.7;
+
+  @keyframes flowAnim {
+    to { stroke-dashoffset: -24; }
   }
-  .mono{
-    font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-    font-size:13px;
+
+  .flow-cpu { stroke: var(--accent-purple); filter: drop-shadow(0 0 6px var(--accent-purple)); }
+  .flow-dma { stroke: var(--accent-yellow); filter: drop-shadow(0 0 6px var(--accent-yellow)); }
+  .flow-dram { stroke: var(--accent-green); filter: drop-shadow(0 0 6px var(--accent-green)); }
+  .flow-irq { 
+    stroke: var(--accent-red); 
+    stroke-dasharray: 6 6;
+    stroke-width: 4;
+    filter: drop-shadow(0 0 8px var(--accent-red)); 
   }
-  .callout{
-    border:1px solid #30446e;
-    background:#10182d;
-    border-radius:12px;
-    padding:12px;
-    margin-top:10px;
-    color:var(--muted);
-    line-height:1.65;
+
+  /* Payload Labels */
+  .payload-bg {
+    fill: rgba(10, 15, 26, 0.9);
+    stroke: rgba(255,255,255,0.2);
+    rx: 8;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
-  .em{ color:#fff; }
-  .kbd{
-    display:inline-block;
-    border:1px solid #43598d;
-    background:#18274c;
-    padding:1px 8px;
-    border-radius:8px;
-    font-size:12px;
-    color:#dbe7ff;
+  .payload-text {
+    fill: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
-  @media (max-width: 980px){
-    .grid{ grid-template-columns:1fr; }
-    .stage{ min-height:820px; }
-    svg{ height:780px; }
+
+  .payload-group.active .payload-bg,
+  .payload-group.active .payload-text {
+    opacity: 1;
   }
+  
+  /* Highlight effect for nodes */
+  .node-group.pulse .node-bg {
+    filter: drop-shadow(0 0 15px currentColor);
+  }
+
 </style>
 </head>
 <body>
+
 <div class="wrap">
-  <h1>DMA / Bus / DRAM 감각 잡기</h1>
-  <div class="sub">
-    버튼을 눌러서 <b>CPU가 직접 옮기는 경우</b>와 <b>DMA가 버스를 타고 DRAM에 쓰는 경우</b>를 비교해보세요.
-    아래 그림은 <b>개념을 직관적으로 보여주기 위한 단순화</b>입니다.
-  </div>
+  <header>
+    <h1>HW System Architecture: CPU vs DMA</h1>
+    <div class="sub">
+      이 데모는 <b>RTL 검증 엔지니어의 관점</b>에서 메모리 트랜잭션과 인터럽트 구조를 직관적으로 시각화합니다.<br>
+      CPU 복사와 DMA 전송(Bus Master/Slave 역할 전환 및 IRQ 발생)의 핵심 개념을 검증합니다.
+    </div>
+  </header>
 
   <div class="grid">
-    <div>
-      <div class="panel controls">
-        <h2>모드 선택</h2>
+    <div class="left-col">
+      <div class="panel">
+        <h2>동작 시나리오</h2>
         <div class="btns">
-          <button id="btn1" class="active">1) CPU가 직접 복사</button>
-          <button id="btn2">2) DMA가 DRAM에 전송</button>
-          <button id="btn3">3) 버스 주소/라우팅 보기</button>
-          <button id="btn4">4) RO Register 방식 보기</button>
+          <button id="btn1" onclick="playMode(1)">1. CPU Direct Copy (MIPS 낭비)</button>
+          <button id="btn2" onclick="playMode(2)" class="active">2. DMA Sequence (Master/Slave)</button>
+          <button id="btn3" onclick="playMode(3)">3. RO Register Polling</button>
         </div>
-        <div class="small">
-          핵심:
-          <br>• CPU 직접 복사 = <span class="em">IP → CPU → BUS → DRAM</span>
-          <br>• DMA 사용 = <span class="em">IP → DMA → BUS → DRAM</span>
-          <br>• 버스 = <span class="em">주소 + 데이터 + 제어 + 핸드셰이크</span>
-        </div>
-      </div>
 
-      <div class="panel legend">
-        <h2>범례</h2>
-        <div class="chips">
-          <div class="chip"><span class="dot" style="background:#ff7a7a"></span>CPU가 하는 일</div>
-          <div class="chip"><span class="dot" style="background:#ffca5c"></span>DMA가 하는 일</div>
-          <div class="chip"><span class="dot" style="background:#8c7bff"></span>버스 경로</div>
-          <div class="chip"><span class="dot" style="background:#55d38a"></span>DRAM 저장</div>
+        <div class="status-box" id="statusBox">
+          <!-- Text injected via JS -->
         </div>
-        <div class="callout">
-          <b>입문용 감각</b><br>
-          지금 문맥에서는 버스를 거의 <span class="em">주소 기반 접근 통로</span>로 보면 됩니다.
-          즉 누군가가 <span class="kbd">addr</span>, <span class="kbd">data</span>, <span class="kbd">write/read</span>,
-          <span class="kbd">valid/ready</span> 같은 신호를 내보내며 공용 통로를 쓰고 있으면,
-          "아 이게 버스구나"라고 느끼면 됩니다.
-        </div>
-      </div>
 
-      <div class="panel explain">
-        <h2>짧은 해설</h2>
-        <div id="sideText" class="small" style="font-size:14px; line-height:1.7; color:#c3d0f0;">
-          CPU가 IP의 데이터를 읽고 다시 DRAM에 써주는 그림입니다. 되긴 되지만, 데이터가 크면 CPU가 단순 복사 노동을 많이 하게 됩니다.
+        <div class="step-nav">
+          <button id="btn-prev" onclick="goStep(-1)">←</button>
+          <span class="step-indicator" id="step-indicator">1 / 1</span>
+          <button id="btn-next" onclick="goStep(1)">→</button>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item"><div class="legend-color" style="background:var(--accent-purple)"></div>CPU Master Bus</div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--accent-yellow)"></div>DMA Master Bus</div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--accent-red)"></div>IRQ Signal (Wire)</div>
+          <div class="legend-item"><div class="legend-color" style="background:var(--accent-green)"></div>DRAM Slave Port</div>
         </div>
       </div>
     </div>
 
-    <div class="panel stage">
-      <svg viewBox="0 0 900 724" xmlns="http://www.w3.org/2000/svg" aria-label="DMA Bus Demo">
-        <!-- base lines -->
-        <path id="l_ip_cpu" class="line" d="M 170 170 L 360 170" />
-        <path id="l_cpu_mem" class="line" d="M 500 170 L 740 170" />
+    <div class="right-col">
+      <div class="panel stage">
+        <svg viewBox="0 0 900 600" id="canvas">
+          <!-- Defined Markers for Flow Direction -->
+          <defs>
+            <marker id="arrow-cpu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-purple)" />
+            </marker>
+            <marker id="arrow-dma" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-yellow)" />
+            </marker>
+            <marker id="arrow-irq" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <polygon points="0,0 10,5 0,10" fill="var(--accent-red)" />
+            </marker>
+          </defs>
 
-        <path id="l_ip_dma" class="line" d="M 170 170 L 170 360 L 360 360" />
-        <path id="l_dma_bus" class="line" d="M 500 360 L 500 520 L 620 520" />
-        <path id="l_bus_mem" class="line bus" d="M 740 455 L 740 280" />
+          <!-- BASE LINES (Faded) -->
+          <!-- CPU to BUS -->
+          <path d="M 450 160 L 450 240 M 450 250 L 450 280" class="path-line" />
+          <!-- IP to BUS -->
+          <path d="M 180 340 L 180 250 L 350 250" class="path-line" />
+          <!-- DMA to BUS (Master) -->
+          <path d="M 520 420 L 520 280" class="path-line" />
+          <!-- BUS to DMA Reg (Slave config) -->
+          <path d="M 450 320 L 450 420" class="path-line" />
+          <!-- BUS to DRAM -->
+          <path d="M 550 250 L 720 250 L 720 200" class="path-line" />
+          <!-- IP to DMA (Peripheral Data Interface) -->
+          <path d="M 240 460 L 390 460" class="path-line" />
+          <!-- DMA to CPU (IRQ WIRE) -->
+          <path d="M 440 420 L 400 360 L 400 160" class="path-line" />
 
-        <path id="l_cpu_bus" class="line" d="M 500 170 L 540 170 L 540 520 L 620 520" />
-        <path id="l_dma_reg_bus" class="line" d="M 430 430 L 430 520 L 620 520" />
+          <!-- ANIMATED FLOW LINES -->
+          
+          <!-- Mode 1 & 3: IP -> BUS (CPU reading) -->
+          <path id="f-ip-bus" d="M 180 340 L 180 250 L 340 250" class="path-flow flow-cpu" marker-end="url(#arrow-cpu)" />
+          
+          <!-- Mode 1: CPU -> BUS -> DRAM (CPU Writing) -->
+          <path id="f-cpu-bus" d="M 430 160 L 430 250 L 540 250" class="path-flow flow-cpu" marker-end="url(#arrow-cpu)" />
+          <path id="f-bus-dram-cpu" d="M 560 250 L 720 250 L 720 210" class="path-flow flow-cpu" marker-end="url(#arrow-cpu)" />
 
-        <path id="l_ip_ro_cpu" class="line" d="M 170 560 L 300 560 L 300 170 L 360 170" />
-        <path id="l_cpu_ro_mem" class="line" d="M 500 170 L 740 170" />
+          <!-- Mode 2 Step 1: CPU -> BUS -> DMA (Config) -->
+          <path id="f-cpu-config" d="M 450 160 L 450 280" class="path-flow flow-cpu" marker-end="url(#arrow-cpu)" />
+          <path id="f-bus-dma-config" d="M 450 320 L 450 410" class="path-flow flow-cpu" marker-end="url(#arrow-cpu)" />
 
-        <!-- nodes -->
-        <rect class="node ip" x="40" y="110" width="130" height="120"/>
-        <text class="title" x="105" y="155" text-anchor="middle">IP</text>
-        <text class="subtitle" x="105" y="183" text-anchor="middle">data producer</text>
+          <!-- Mode 2 Step 2: IP -> DMA -> BUS -> DRAM (DMA Transfer) -->
+          <path id="f-ip-dma" d="M 240 460 L 380 460" class="path-flow flow-dma" marker-end="url(#arrow-dma)" />
+          <path id="f-dma-bus" d="M 520 420 L 520 290" class="path-flow flow-dma" marker-end="url(#arrow-dma)" />
+          <path id="f-bus-dram-dma" d="M 560 250 L 730 250 L 730 210" class="path-flow flow-dma" marker-end="url(#arrow-dma)" />
 
-        <rect class="node cpu" x="360" y="110" width="140" height="120"/>
-        <text class="title" x="430" y="155" text-anchor="middle">CPU</text>
-        <text class="subtitle" x="430" y="183" text-anchor="middle">제어 / 판단 / 복사</text>
+          <!-- Mode 2 Step 3: DMA -> CPU (IRQ) -->
+          <path id="f-irq" d="M 430 420 L 380 360 L 380 170" class="path-flow flow-irq" marker-end="url(#arrow-irq)" />
 
-        <rect class="node dma" x="360" y="300" width="140" height="120"/>
-        <text class="title" x="430" y="345" text-anchor="middle">DMA</text>
-        <text class="subtitle" x="430" y="373" text-anchor="middle">전용 전송 엔진</text>
+          <!-- NODES -->
+          <!-- CPU -->
+          <g class="node-group" id="node-cpu">
+            <rect x="350" y="60" width="200" height="100" class="node-bg node-cpu" />
+            <text x="450" y="105" text-anchor="middle" class="node-text-title">CPU</text>
+            <text x="450" y="130" text-anchor="middle" class="node-text-sub">System Master</text>
+          </g>
 
-        <rect class="node bus" x="620" y="455" width="120" height="130"/>
-        <text class="title" x="680" y="505" text-anchor="middle">BUS</text>
-        <text class="subtitle" x="680" y="533" text-anchor="middle">addr/data/ctrl</text>
-        <text class="subtitle" x="680" y="554" text-anchor="middle">valid/ready</text>
+          <!-- DRAM -->
+          <g class="node-group" id="node-dram">
+            <rect x="660" y="60" width="160" height="140" class="node-bg node-mem" />
+            <text x="740" y="125" text-anchor="middle" class="node-text-title">DRAM</text>
+            <text x="740" y="150" text-anchor="middle" class="node-text-sub">Memory Slave</text>
+          </g>
 
-        <rect class="node mem" x="740" y="110" width="120" height="170"/>
-        <text class="title" x="800" y="160" text-anchor="middle">DRAM</text>
-        <text class="subtitle" x="800" y="190" text-anchor="middle">SW가 나중에 확인</text>
-        <text class="subtitle" x="800" y="212" text-anchor="middle">큰 버퍼 저장</text>
+          <!-- Interconnect / BUS -->
+          <g class="node-group" id="node-bus">
+            <rect x="350" y="240" width="200" height="80" class="node-bg node-bus" />
+            <text x="450" y="280" text-anchor="middle" class="node-text-title" style="font-size:18px;">AXI Interconnect</text>
+            <text x="450" y="300" text-anchor="middle" class="node-text-sub">Routing & Arbitration</text>
+          </g>
 
-        <rect class="node ip" x="40" y="500" width="130" height="120"/>
-        <text class="title" x="105" y="545" text-anchor="middle">IP</text>
-        <text class="subtitle" x="105" y="573" text-anchor="middle">RO Register 노출</text>
+          <!-- IP -->
+          <g class="node-group" id="node-ip">
+            <rect x="80" y="340" width="160" height="160" class="node-bg node-ip" />
+            <text x="160" y="415" text-anchor="middle" class="node-text-title">IP</text>
+            <text x="160" y="440" text-anchor="middle" class="node-text-sub">Data Producer</text>
+            <text x="160" y="460" text-anchor="middle" class="node-text-sub">(e.g., DM Client)</text>
+          </g>
 
-        <!-- payload boxes -->
-        <rect id="p1" class="payloadBox" x="225" y="135" width="110" height="48"/>
-        <text id="pt1" class="payload" x="280" y="164" text-anchor="middle">data chunk</text>
+          <!-- DMA -->
+          <g class="node-group" id="node-dma">
+            <rect x="390" y="420" width="160" height="140" class="node-bg node-dma" />
+            <text x="470" y="485" text-anchor="middle" class="node-text-title">DMA</text>
+            <text x="470" y="510" text-anchor="middle" class="node-text-sub">Transfer Engine</text>
+            <text x="470" y="530" text-anchor="middle" class="node-text-sub">Master & Slave</text>
+          </g>
 
-        <rect id="p2" class="payloadBox" x="548" y="335" width="125" height="48"/>
-        <text id="pt2" class="payload" x="610" y="364" text-anchor="middle">burst write</text>
+          <!-- TAGS & PAYLOADS -->
+          <g class="payload-group" id="tag-cpu-read">
+            <rect x="200" y="225" width="90" height="24" class="payload-bg" />
+            <text x="245" y="242" text-anchor="middle" class="payload-text">Read Reg</text>
+          </g>
 
-        <rect id="p3" class="payloadBox" x="250" y="528" width="120" height="48"/>
-        <text id="pt3" class="payload" x="310" y="557" text-anchor="middle">reg read x N</text>
+          <g class="payload-group" id="tag-cpu-write">
+            <rect x="580" y="220" width="100" height="24" class="payload-bg" />
+            <text x="630" y="237" text-anchor="middle" class="payload-text" fill="var(--accent-purple)">Store Data</text>
+          </g>
 
-        <!-- bus address note -->
-        <rect id="addrBox" class="payloadBox" x="560" y="605" width="260" height="76"/>
-        <text class="payload mono" x="580" y="632">addr = 0x8000_1000</text>
-        <text class="payload mono" x="580" y="654">data = 0x1234_5678</text>
-        <text class="payload mono" x="580" y="676">ctrl = WRITE, valid = 1</text>
-      </svg>
+          <g class="payload-group" id="tag-dma-cfg">
+            <rect x="460" y="340" width="110" height="24" class="payload-bg" />
+            <text x="515" y="357" text-anchor="middle" class="payload-text">Config Write</text>
+          </g>
 
-      <div class="banner">
-        <div id="bannerTitle" class="bannerTitle">1) CPU가 직접 복사 (CPU = bus master)</div>
-        <div id="bannerText" class="bannerText">
-          IP → CPU → BUS → DRAM 경로입니다. CPU도 버스를 통해 DRAM에 씁니다.
-          DMA와 차이는 "버스를 쓰냐 마냐"가 아니라 "누가 버스를 drive하냐"입니다.
-        </div>
+          <g class="payload-group" id="tag-dma-data">
+            <rect x="260" y="430" width="90" height="24" class="payload-bg" />
+            <text x="305" y="447" text-anchor="middle" class="payload-text">Stream Req</text>
+          </g>
+          
+          <g class="payload-group" id="tag-dma-burst">
+            <rect x="580" y="260" width="100" height="24" class="payload-bg" />
+            <text x="630" y="277" text-anchor="middle" class="payload-text" fill="var(--accent-yellow)">Burst Write</text>
+          </g>
+
+          <g class="payload-group" id="tag-irq">
+            <rect x="290" y="310" width="80" height="24" class="payload-bg" />
+            <text x="330" y="327" text-anchor="middle" class="payload-text" fill="var(--accent-red)">IRQ Assert</text>
+          </g>
+
+        </svg>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const els = {
-  btn1: document.getElementById('btn1'),
-  btn2: document.getElementById('btn2'),
-  btn3: document.getElementById('btn3'),
-  btn4: document.getElementById('btn4'),
-  sideText: document.getElementById('sideText'),
-  bannerTitle: document.getElementById('bannerTitle'),
-  bannerText: document.getElementById('bannerText'),
+  let currentMode = 2;
+  let currentStep = 1;
 
-  l_ip_cpu: document.getElementById('l_ip_cpu'),
-  l_cpu_mem: document.getElementById('l_cpu_mem'),
-  l_ip_dma: document.getElementById('l_ip_dma'),
-  l_dma_bus: document.getElementById('l_dma_bus'),
-  l_bus_mem: document.getElementById('l_bus_mem'),
-  l_cpu_bus: document.getElementById('l_cpu_bus'),
-  l_dma_reg_bus: document.getElementById('l_dma_reg_bus'),
-  l_ip_ro_cpu: document.getElementById('l_ip_ro_cpu'),
-  l_cpu_ro_mem: document.getElementById('l_cpu_ro_mem'),
+  const stepCount = { 1: 1, 2: 3, 3: 1 };
 
-  p1: document.getElementById('p1'),
-  p2: document.getElementById('p2'),
-  p3: document.getElementById('p3'),
-  pt1: document.getElementById('pt1'),
-  pt2: document.getElementById('pt2'),
-  pt3: document.getElementById('pt3'),
-  addrBox: document.getElementById('addrBox'),
-};
+  const els = {
+    btns: [document.getElementById('btn1'), document.getElementById('btn2'), document.getElementById('btn3')],
+    statusBox: document.getElementById('statusBox'),
+    stepIndicator: document.getElementById('step-indicator'),
+    btnPrev: document.getElementById('btn-prev'),
+    btnNext: document.getElementById('btn-next'),
 
-function reset() {
-  [els.btn1, els.btn2, els.btn3, els.btn4].forEach(b => b.classList.remove('active'));
-  [
-    els.l_ip_cpu, els.l_cpu_mem, els.l_ip_dma, els.l_dma_bus, els.l_bus_mem,
-    els.l_cpu_bus, els.l_dma_reg_bus, els.l_ip_ro_cpu, els.l_cpu_ro_mem
-  ].forEach(l => {
-    l.classList.remove('active','cpu','dma','busx','mem');
-  });
+    flowIpBus:      document.getElementById('f-ip-bus'),
+    flowCpuBus:     document.getElementById('f-cpu-bus'),
+    flowBusDramCpu: document.getElementById('f-bus-dram-cpu'),
+    flowCpuCfg:     document.getElementById('f-cpu-config'),
+    flowBusDmaCfg:  document.getElementById('f-bus-dma-config'),
+    flowIpDma:      document.getElementById('f-ip-dma'),
+    flowDmaBus:     document.getElementById('f-dma-bus'),
+    flowBusDramDma: document.getElementById('f-bus-dram-dma'),
+    flowIrq:        document.getElementById('f-irq'),
 
-  els.p1.style.opacity = 0.25;
-  els.p2.style.opacity = 0.25;
-  els.p3.style.opacity = 0.25;
-  els.addrBox.style.opacity = 0.25;
-}
+    tagCpuRead:  document.getElementById('tag-cpu-read'),
+    tagCpuWrite: document.getElementById('tag-cpu-write'),
+    tagDmaCfg:   document.getElementById('tag-dma-cfg'),
+    tagDmaData:  document.getElementById('tag-dma-data'),
+    tagDmaBurst: document.getElementById('tag-dma-burst'),
+    tagIrq:      document.getElementById('tag-irq'),
 
-function mode1() {
-  reset();
-  els.btn1.classList.add('active');
-  els.l_ip_cpu.classList.add('active','cpu');
-  els.l_cpu_bus.classList.add('active','cpu');
-  els.l_bus_mem.classList.add('active','cpu');
-  els.p1.style.opacity = 1.0;
-  els.sideText.innerHTML =
-    'CPU도 <b>버스를 통해</b> DRAM에 씁니다. CPU가 직접 bus master로 load/store를 수행합니다. 데이터가 크면 CPU가 단순 복사 노동에 시간을 많이 씁니다.';
-  els.bannerTitle.textContent = '1) CPU가 직접 복사 (CPU = bus master)';
-  els.bannerText.textContent =
-    'IP → CPU → BUS → DRAM 경로입니다. CPU가 bus master로서 직접 각 transaction을 발생시킵니다. DMA와 차이는 "버스를 쓰냐 마냐"가 아니라 "누가 버스를 drive하냐"입니다.';
-}
+    nodeCpu: document.getElementById('node-cpu'),
+    nodeDma: document.getElementById('node-dma'),
+    nodeMem: document.getElementById('node-dram'),
+    nodeIp:  document.getElementById('node-ip'),
+  };
 
-function mode2() {
-  reset();
-  els.btn2.classList.add('active');
-  els.l_ip_dma.classList.add('active','dma');
-  els.l_dma_bus.classList.add('active','dma');
-  els.l_bus_mem.classList.add('active','busx','mem');
-  els.p2.style.opacity = 1.0;
-  els.addrBox.style.opacity = 1.0;
-  els.sideText.innerHTML =
-    'DMA가 전송 엔진 역할을 합니다. CPU는 보통 <b>src/dst/len/start</b> 같은 설정만 하고 빠지고, DMA가 버스를 타고 DRAM에 burst write 합니다.';
-  els.bannerTitle.textContent = '2) DMA가 DRAM에 전송';
-  els.bannerText.textContent =
-    'IP → DMA → BUS → DRAM 경로입니다. CPU는 감독, DMA는 운반 담당이라고 보면 됩니다. 대량 전송일수록 이 구조가 유리합니다.';
-}
+  function clearAll() {
+    els.btns.forEach(b => b.classList.remove('active'));
+    [
+      els.flowIpBus, els.flowCpuBus, els.flowBusDramCpu,
+      els.flowCpuCfg, els.flowBusDmaCfg, els.flowIpDma,
+      els.flowDmaBus, els.flowBusDramDma, els.flowIrq
+    ].forEach(el => el.classList.remove('active'));
+    [
+      els.tagCpuRead, els.tagCpuWrite, els.tagDmaCfg,
+      els.tagDmaData, els.tagDmaBurst, els.tagIrq
+    ].forEach(el => el.classList.remove('active'));
+    [els.nodeCpu, els.nodeDma, els.nodeMem, els.nodeIp].forEach(el => el.classList.remove('pulse'));
+  }
 
-function mode3() {
-  reset();
-  els.btn3.classList.add('active');
-  els.l_cpu_bus.classList.add('active','cpu');
-  els.l_dma_reg_bus.classList.add('active','dma');
-  els.l_bus_mem.classList.add('active','busx');
-  els.addrBox.style.opacity = 1.0;
-  els.sideText.innerHTML =
-    '버스의 핵심은 <b>주소 기반 접근</b>입니다. 누군가가 <b>addr/data/ctrl</b>를 올리면, interconnect나 decoder가 그 주소를 보고 적절한 대상(DRAM, DMA reg, IP reg)으로 라우팅합니다.';
-  els.bannerTitle.textContent = '3) 버스 주소 / 라우팅 보기';
-  els.bannerText.textContent =
-    '“버스를 탄다”는 말은 그냥 데이터를 흘린다는 뜻이 아니라, 주소/제어/핸드셰이크를 포함한 transaction을 공용 통로에 올린다는 뜻입니다.';
-}
+  function updateNav() {
+    const total = stepCount[currentMode];
+    els.stepIndicator.textContent = total === 1 ? '—' : `${currentStep} / ${total}`;
+    els.btnPrev.disabled = currentStep <= 1;
+    els.btnNext.disabled = currentStep >= total;
+  }
 
-function mode4() {
-  reset();
-  els.btn4.classList.add('active');
-  els.l_ip_ro_cpu.classList.add('active','cpu');
-  els.l_cpu_bus.classList.add('active','cpu');
-  els.l_bus_mem.classList.add('active','cpu');
-  els.p3.style.opacity = 1.0;
-  els.sideText.innerHTML =
-    'RO Register 방식은 SW가 레지스터를 여러 번 읽어서 데이터를 가져오는 그림입니다. CPU가 버스를 통해 IP reg를 읽고, 다시 버스를 통해 DRAM에 씁니다. <b>큰 burst 데이터</b>에는 비효율적입니다.';
-  els.bannerTitle.textContent = '4) RO Register 방식 (CPU = bus master, 반복)';
-  els.bannerText.textContent =
-    'IP가 결과를 RO Register로 노출하고, CPU가 reg read를 N번 반복한 뒤 다시 DRAM에 정리하는 방식입니다. CPU가 bus transaction을 수천 번 직접 발생시키므로 HW area와 SW MIPS 양쪽이 부담됩니다.';
-}
+  function render() {
+    clearAll();
+    els.btns[currentMode - 1].classList.add('active');
+    updateNav();
 
-els.btn1.addEventListener('click', mode1);
-els.btn2.addEventListener('click', mode2);
-els.btn3.addEventListener('click', mode3);
-els.btn4.addEventListener('click', mode4);
+    if (currentMode === 1) {
+      els.nodeCpu.classList.add('pulse');
+      els.flowIpBus.classList.add('active');
+      els.flowCpuBus.classList.add('active');
+      els.flowBusDramCpu.classList.add('active');
+      els.tagCpuRead.classList.add('active');
+      els.tagCpuWrite.classList.add('active');
+      els.statusBox.innerHTML = `
+        <strong style="color:var(--accent-purple)">CPU Bus Master 모드</strong><br>
+        CPU가 직접 IP의 결과 레지스터를 읽고(Load), 버스를 통해 DRAM에 씁니다(Store).<br><br>
+        <i>단점:</i> 데이터 전송 시 CPU 점유율이 높아져 다른 작업을 수행하지 못합니다. MIPS 낭비가 심합니다.
+      `;
+    }
 
-mode1();
+    else if (currentMode === 2) {
+      if (currentStep === 1) {
+        els.nodeCpu.classList.add('pulse');
+        els.flowCpuCfg.classList.add('active');
+        els.flowBusDmaCfg.classList.add('active');
+        els.tagDmaCfg.classList.add('active');
+        els.statusBox.innerHTML = `
+          <strong style="color:var(--accent-purple)">Step 1: CPU → DMA 설정 (DMA = Slave)</strong><br>
+          CPU가 AXI Bus를 거쳐 DMA의 Control Register(Slave Port)에<br>
+          src_addr, dst_addr, length, start를 write합니다.
+        `;
+      } else if (currentStep === 2) {
+        els.nodeDma.classList.add('pulse');
+        els.flowIpDma.classList.add('active');
+        els.flowDmaBus.classList.add('active');
+        els.flowBusDramDma.classList.add('active');
+        els.tagDmaData.classList.add('active');
+        els.tagDmaBurst.classList.add('active');
+        els.statusBox.innerHTML = `
+          <strong style="color:var(--accent-yellow)">Step 2: DMA 데이터 전송 (DMA = Master)</strong><br>
+          DMA가 스스로 Bus Master가 되어 IP의 데이터를 DRAM으로 Burst Write합니다.<br>
+          <i>이때 CPU는 자유롭게 다른 작업 가능.</i>
+        `;
+      } else if (currentStep === 3) {
+        els.nodeCpu.classList.add('pulse');
+        els.flowIrq.classList.add('active');
+        els.tagIrq.classList.add('active');
+        els.statusBox.innerHTML = `
+          <strong style="color:var(--accent-red)">Step 3: IRQ Assert</strong><br>
+          전송 완료 시 DMA가 CPU로 IRQ 신호를 올립니다.<br>
+          CPU는 하던 일을 멈추고 ISR에서 Pending Status를 확인 후 clear합니다.
+        `;
+      }
+    }
+
+    else if (currentMode === 3) {
+      els.nodeCpu.classList.add('pulse');
+      els.nodeIp.classList.add('pulse');
+      els.flowIpBus.classList.add('active');
+      els.tagCpuRead.classList.add('active');
+      els.statusBox.innerHTML = `
+        <strong style="color:var(--accent-blue)">RO Register Polling</strong><br>
+        IP가 생성한 결과를 CPU가 수천 번 Read/Polling합니다.<br><br>
+        <i>단점:</i> IP 하드웨어 면적(Size) 증가와 CPU MIPS/대역폭 낭비가 동시에 발생합니다.
+      `;
+    }
+  }
+
+  function playMode(mode) {
+    currentMode = mode;
+    currentStep = 1;
+    render();
+  }
+
+  function goStep(dir) {
+    const total = stepCount[currentMode];
+    currentStep = Math.max(1, Math.min(total, currentStep + dir));
+    render();
+  }
+
+  playMode(2);
 </script>
 </body>
 </html>
