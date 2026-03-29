@@ -217,6 +217,7 @@ module tb_top;
         $display("[TEST] Smoke Test Done");
         $display("[TEST] ============================");
 
+        repeat (5 * CLKS_PER_BIT) @(posedge clk);
         $finish;
     end
 

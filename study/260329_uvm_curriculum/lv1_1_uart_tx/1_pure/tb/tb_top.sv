@@ -65,8 +65,8 @@ module tb_top;
         tx_valid = 1'b0;
 
         // --- 수신 (inline 모니터링) ---
-        // start bit 감지
-        while (tx_serial !== 1'b0) @(posedge clk);
+        // start bit 감지: 선이 LOW로 떨어지는 순간 포착 (UART 비동기 수신 방식)
+        @(negedge tx_serial);
 
         // 1.5 baud 후 → D0 중앙
         repeat (CLKS_PER_BIT + CLKS_PER_BIT / 2) @(posedge clk);
@@ -83,6 +83,7 @@ module tb_top;
         else
             $display("FAIL: expected=0x48  captured=0x%02h", captured);
 
+        repeat (CLKS_PER_BIT) @(posedge clk);
         $finish;
     end
 
