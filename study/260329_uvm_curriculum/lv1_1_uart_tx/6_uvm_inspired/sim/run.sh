@@ -11,7 +11,7 @@ echo "=============================="
 echo " UART TX Smoke Test"
 echo "=============================="
 
-iverilog -g2012 -o "${OUT}" "${ROOT}/rtl/UART_Tx.sv" "${SIM_DIR}/../tb/top/tb_top.sv"
+iverilog -g2012 -o "${OUT}" "${ROOT}/rtl/UART_Tx.sv" "${SIM_DIR}/../tb/top/tb_top_v6.sv"
 
 echo "[OK] Compile success"
 echo ""

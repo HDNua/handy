@@ -5,5 +5,5 @@ ROOT="${SIM_DIR}/../.."
 OUT="${SIM_DIR}/uart_tx_sim"
 LOG="${SIM_DIR}/sim.log"
 
-iverilog -g2012 -o "${OUT}" "${ROOT}/rtl/UART_Tx.sv" "${SIM_DIR}/../tb/tb_top_v3.sv"
+iverilog -g2012 -o "${OUT}" "${ROOT}/rtl/UART_Tx.sv" "${SIM_DIR}/../tb/tb_top_v4.sv"
 cd "${SIM_DIR}" && "${OUT}" 2>&1 | tee "${LOG}"
