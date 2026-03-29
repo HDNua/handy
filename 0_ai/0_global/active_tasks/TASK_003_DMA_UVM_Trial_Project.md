@@ -1,0 +1,153 @@
+# TASK_003_DMA_UVM_Trial_Project
+
+## 상태
+- Active
+
+## 생성일
+- 2026-03-29
+
+## 목표
+- RTL 설계 + UVM-inspired TB 작성을 단계별로 실습
+- UVM 구조(seq_item / sequence / driver / monitor / scoreboard / coverage / agent / env / test)를 직접 손으로 구현하며 체득
+- 면접 준비 문서(TASK_002)에서 도출된 UVM 학습 계획(block sim 전환) 실행
+- iverilog 기반 무료 환경에서 각 레벨 smoke test 통과까지 완성
+
+## 배경
+- 기존 경력에서 UVM 환경은 운영/회귀 위주였고, UVM 컴포넌트를 제로에서 설계한 경험이 약함
+- 면접에서 "UVM TB 직접 짠 경험" 질문 대비용 실전 실습
+- 참고 자료: `study/260326_122856/2_output_claude/02_dma.md`
+
+---
+
+## 커리큘럼
+
+### Level 1 — UART TX (UVM 기초 구조 체득)
+
+```
+CPU cfg → [UART TX DUT] → serial bitstream → monitor 복원 → scoreboard
+```
+
+- **응용**: PC와 보드가 시리얼 케이블로 통신
+- **핵심 학습**: seq_item / driver / monitor / scoreboard 기본 구조
+- **RTL 복잡도**: baud rate divider + shift register FSM, 단순
+
+### Level 2 — I2C Master (프로토콜 handshake + monitor 복잡도 UP)
+
+```
+CPU cfg → [I2C Master DUT] → SCL/SDA → monitor 프레임 복원 → slave stub ACK/NACK
+```
+
+- **응용**: 스마트폰 내부 온도/가속도/배터리 센서 읽기
+- **핵심 학습**: 프로토콜 monitor (비트스트림 → 프레임 복원), ACK/NACK handshake
+- **RTL 복잡도**: 중간 (clock stretching, start/stop 조건 포함)
+
+### Level 3 — CRC32 Engine + DMA (스트리밍 + DMA 연동)
+
+```
+[MEM] → DMA → [CRC32 Engine] → result reg + IRQ → scoreboard
+```
+
+- **응용**: NAND flash / 이더넷 데이터 무결성 검사 (SK하이닉스 직접 연관)
+- **핵심 학습**: DMA 스트리밍 연동, scoreboard = SW CRC vs HW CRC
+- **RTL 복잡도**: LFSR 기반 CRC32, 중간
+
+### Level 4 — DMA + UART TX (시스템 통합)
+
+```
+[MEM] → DMA → [UART TX] → serial out → monitor
+```
+
+- **응용**: 메모리에 있는 문자열을 DMA로 UART에 흘려 PC로 전송
+- **핵심 학습**: 두 DUT + 두 agent 통합 env, 시스템 레벨 시나리오
+- **RTL 복잡도**: Level 1 + Level 3 재활용
+
+---
+
+## 산출물 위치
+
+```
+study/260329_uvm_curriculum/
+├── lv1_uart_tx/
+│   ├── rtl/
+│   │   └── uart_tx.sv
+│   ├── tb/
+│   │   ├── pkg/uart_pkg.sv
+│   │   ├── if/uart_if.sv
+│   │   ├── top/tb_top.sv
+│   │   └── test/smoke_test.sv
+│   └── sim/run.sh
+├── lv2_i2c_master/
+│   ├── rtl/
+│   │   └── i2c_master.sv
+│   ├── tb/
+│   │   ├── pkg/i2c_pkg.sv
+│   │   ├── if/i2c_if.sv
+│   │   ├── top/tb_top.sv
+│   │   └── test/smoke_test.sv
+│   └── sim/run.sh
+├── lv3_crc32_dma/
+│   ├── rtl/
+│   │   ├── crc32_engine.sv
+│   │   └── simple_dma.sv
+│   ├── tb/
+│   │   ├── pkg/crc_dma_pkg.sv
+│   │   ├── if/
+│   │   ├── top/tb_top.sv
+│   │   └── test/smoke_test.sv
+│   └── sim/run.sh
+└── lv4_dma_uart/
+    ├── rtl/                  ← lv1 + lv3 재활용
+    ├── tb/
+    └── sim/run.sh
+```
+
+---
+
+## TB 클래스 구조 (UVM-inspired, iverilog 호환)
+
+| 클래스 | 역할 |
+|---|---|
+| `xxx_seq_item` | transaction 데이터 정의 |
+| `xxx_sequence` | seq_item 생성 → mailbox로 driver에 전달 |
+| `xxx_driver` | seq_item 받아 DUT 인터페이스 구동 |
+| `xxx_monitor` | DUT 출력 관찰 → scoreboard에 전달 |
+| `xxx_scoreboard` | expected vs actual 비교 |
+| `xxx_coverage` | covergroup 정의 |
+| `xxx_agent` | driver + monitor 묶음 |
+| `xxx_env` | agent + scoreboard + coverage 묶음 |
+| `base_test` | env 생성 + run |
+| `smoke_test` | 기본 동작 1개 PASS |
+
+> Full UVM macro/factory 미사용 — SV OOP(class/mailbox/virtual interface)로 구조 직접 구현
+> 이유: iverilog는 full UVM 라이브러리 미지원. 구조를 직접 짜야 UVM 내부 동작 이해에 더 효과적.
+
+---
+
+## 진행 현황
+
+### Level 1 — UART TX
+- [ ] RTL 작성 (uart_tx.sv)
+- [ ] interface + tb_top
+- [ ] seq_item + driver
+- [ ] monitor + scoreboard
+- [ ] smoke test PASS
+- [ ] coverage 추가
+
+### Level 2 — I2C Master
+- [ ] RTL 작성
+- [ ] interface + tb_top
+- [ ] driver (START/ADDR/DATA/STOP 시퀀스)
+- [ ] monitor (비트스트림 → 프레임 복원)
+- [ ] slave stub (ACK/NACK)
+- [ ] smoke test PASS
+
+### Level 3 — CRC32 Engine + DMA
+- [ ] RTL 작성 (crc32_engine.sv + simple_dma.sv)
+- [ ] DMA 스트리밍 연동
+- [ ] scoreboard (SW CRC vs HW CRC)
+- [ ] smoke test PASS
+
+### Level 4 — DMA + UART TX
+- [ ] 시스템 통합 env
+- [ ] 두 agent 연결
+- [ ] 시스템 레벨 smoke test PASS
