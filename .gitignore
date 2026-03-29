@@ -2,6 +2,7 @@
 *.vcd
 *.vvp
 *_sim
+sim.log
 
 # macOS
 .DS_Store

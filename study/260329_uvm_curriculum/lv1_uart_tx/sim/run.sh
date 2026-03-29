@@ -5,17 +5,19 @@ set -e
 SIM_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT="${SIM_DIR}/.."
 OUT="${SIM_DIR}/uart_tx_sim"
+LOG="${SIM_DIR}/sim.log"
 
 echo "=============================="
 echo " UART TX Smoke Test"
 echo "=============================="
 
-iverilog -g2012 -o "${OUT}" "${ROOT}/rtl/uart_tx.sv" "${ROOT}/tb/top/tb_top.sv"
+iverilog -g2012 -o "${OUT}" "${ROOT}/rtl/UART_Tx.sv" "${ROOT}/tb/top/tb_top.sv"
 
 echo "[OK] Compile success"
 echo ""
 echo "----- Simulation Output -----"
-cd "${SIM_DIR}" && "${OUT}"
+
+cd "${SIM_DIR}" && "${OUT}" 2>&1 | tee "${LOG}"
 
 echo "=============================="
 echo " Done"
