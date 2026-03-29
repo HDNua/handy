@@ -111,10 +111,12 @@ lv1_uart_tx/
 │   └── uart_tx.vcd                        파형 (gitignore 처리)
 ├── uart_tx_demo.html                      개념 시각화 HTML
 ├── 20260329_lv1_retrospective.md          실습 회고
-├── 20260329_uart_register_strategy.md     레지스터 체험 확장 전략
 ├── 20260329_uart_tx_demo_edit_notes.md    HTML 수정 내역
 └── 20260329_uart_concept_notes.md         UART 개념 정리 메모
 ```
+
+레지스터 기반 peripheral 체험은 본선 `lv1_uart_tx`와 분리하여
+별도 companion track `../lv1b_uart_registers/`로 옮겼다.
 
 ---
 

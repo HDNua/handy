@@ -11,6 +11,7 @@
 - UVM 구조(seq_item / sequence / driver / monitor / scoreboard / coverage / agent / env / test)를 직접 손으로 구현하며 체득
 - 면접 준비 문서(TASK_002)에서 도출된 UVM 학습 계획(block sim 전환) 실행
 - iverilog 기반 무료 환경에서 각 레벨 smoke test 통과까지 완성
+- 메인 검증 커리큘럼과 register/SW interaction 확장 주제를 분리해 학습 초점을 유지
 
 ## 배경
 - 기존 경력에서 UVM 환경은 운영/회귀 위주였고, UVM 컴포넌트를 제로에서 설계한 경험이 약함
@@ -19,9 +20,19 @@
 
 ---
 
-## 커리큘럼
+## 커리큘럼 구조
 
-### Level 1 — UART TX (UVM 기초 구조 체득)
+### Main Track — Protocol + UVM-inspired Verification
+
+핵심 목표:
+
+- 프로토콜 이해
+- monitor/scoreboard 중심 검증 구조 체득
+- DUT 복잡도를 단계적으로 높이며 인터뷰용 스토리라인 확보
+
+이 트랙이 `TASK_003`의 본선이다.
+
+### Main Level 1 — UART TX (UVM 기초 구조 체득)
 
 ```
 CPU cfg → [UART TX DUT] → serial bitstream → monitor 복원 → scoreboard
@@ -31,7 +42,7 @@ CPU cfg → [UART TX DUT] → serial bitstream → monitor 복원 → scoreboard
 - **핵심 학습**: seq_item / driver / monitor / scoreboard 기본 구조
 - **RTL 복잡도**: baud rate divider + shift register FSM, 단순
 
-### Level 2 — I2C Master (프로토콜 handshake + monitor 복잡도 UP)
+### Main Level 2 — I2C Master (프로토콜 handshake + monitor 복잡도 UP)
 
 ```
 CPU cfg → [I2C Master DUT] → SCL/SDA → monitor 프레임 복원 → slave stub ACK/NACK
@@ -41,7 +52,7 @@ CPU cfg → [I2C Master DUT] → SCL/SDA → monitor 프레임 복원 → slave 
 - **핵심 학습**: 프로토콜 monitor (비트스트림 → 프레임 복원), ACK/NACK handshake
 - **RTL 복잡도**: 중간 (clock stretching, start/stop 조건 포함)
 
-### Level 3 — CRC32 Engine + DMA (스트리밍 + DMA 연동)
+### Main Level 3 — CRC32 Engine + DMA (스트리밍 + DMA 연동)
 
 ```
 [MEM] → DMA → [CRC32 Engine] → result reg + IRQ → scoreboard
@@ -51,7 +62,7 @@ CPU cfg → [I2C Master DUT] → SCL/SDA → monitor 프레임 복원 → slave 
 - **핵심 학습**: DMA 스트리밍 연동, scoreboard = SW CRC vs HW CRC
 - **RTL 복잡도**: LFSR 기반 CRC32, 중간
 
-### Level 4 — DMA + UART TX (시스템 통합)
+### Main Level 4 — DMA + UART TX (시스템 통합)
 
 ```
 [MEM] → DMA → [UART TX] → serial out → monitor
@@ -61,6 +72,27 @@ CPU cfg → [I2C Master DUT] → SCL/SDA → monitor 프레임 복원 → slave 
 - **핵심 학습**: 두 DUT + 두 agent 통합 env, 시스템 레벨 시나리오
 - **RTL 복잡도**: Level 1 + Level 3 재활용
 
+### Companion Track — Peripheral Register + SW Interaction
+
+메인 검증 트랙과 별도로,
+`SW가 레지스터를 설정하고 peripheral을 사용하는 감각`은 companion track으로 분리한다.
+
+분리 이유:
+
+- `lv1_uart_tx`의 초점을 UART 프로토콜 + monitor/scoreboard 구조에 유지
+- MMIO/register map 학습이 본선 커리큘럼을 흐리지 않게 관리
+- 필요할 때만 register wrapper, polling, TXDATA write 흐름을 별도 실습으로 확장
+
+### Companion Level 1B — UART Registers + CPU-style Access
+
+```text
+CPU write/read -> [UART Register Wrapper] -> [UART TX] -> serial bitstream
+```
+
+- **응용**: MCU/SoC가 UART peripheral register를 설정하고 문자 전송
+- **핵심 학습**: CTRL / STATUS / TXDATA / BAUD_DIV, polling, MMIO 감각
+- **위치**: `study/260329_uvm_curriculum/lv1b_uart_registers/`
+
 ---
 
 ## 산출물 위치
@@ -69,13 +101,18 @@ CPU cfg → [I2C Master DUT] → SCL/SDA → monitor 프레임 복원 → slave 
 study/260329_uvm_curriculum/
 ├── lv1_uart_tx/
 │   ├── rtl/
-│   │   └── uart_tx.sv
+│   │   └── UART_Tx.sv
 │   ├── tb/
 │   │   ├── pkg/uart_pkg.sv
 │   │   ├── if/uart_if.sv
 │   │   ├── top/tb_top.sv
 │   │   └── test/smoke_test.sv
 │   └── sim/run.sh
+├── lv1b_uart_registers/
+│   ├── 20260329_uart_register_strategy.md
+│   ├── rtl/
+│   ├── tb/
+│   └── sim/
 ├── lv2_i2c_master/
 │   ├── rtl/
 │   │   └── i2c_master.sv
@@ -140,8 +177,10 @@ study/260329_uvm_curriculum/
 
 ## 진행 현황
 
-### Level 1 — UART TX ✅ (2026-03-29 완료)
-- [x] RTL 작성 (uart_tx.sv) — IDLE→START→DATA→STOP FSM
+### Main Track
+
+#### Level 1 — UART TX ✅ (2026-03-29 완료)
+- [x] RTL 작성 (UART_Tx.sv) — IDLE→START→DATA→STOP FSM
 - [x] tb_top.sv — clk/rst, DUT 연결, VCD dump
 - [x] sequence (drv_q 적재)
 - [x] driver (tx_data/tx_valid 구동)
@@ -150,19 +189,29 @@ study/260329_uvm_curriculum/
 - [x] smoke test PASS — "Hello" 5바이트 PASS 5 / FAIL 0
 - [ ] coverage 추가 (선택)
 
-### Level 2 — I2C Master
+#### Level 2 — I2C Master
 - [ ] RTL 작성
 - [ ] tb_top (driver: START/ADDR/DATA/STOP, monitor: 프레임 복원)
 - [ ] slave stub (ACK/NACK)
 - [ ] smoke test PASS
 
-### Level 3 — CRC32 Engine + DMA
+#### Level 3 — CRC32 Engine + DMA
 - [ ] RTL 작성 (crc32_engine.sv + simple_dma.sv)
 - [ ] DMA 스트리밍 연동
 - [ ] scoreboard (SW CRC vs HW CRC)
 - [ ] smoke test PASS
 
-### Level 4 — DMA + UART TX
+#### Level 4 — DMA + UART TX
 - [ ] 시스템 통합
 - [ ] 두 DUT 연결
 - [ ] 시스템 레벨 smoke test PASS
+
+### Companion Track
+
+#### Level 1B — UART Registers
+- [x] 본선 커리큘럼과 분리 필요성 확인
+- [x] companion track 방향 확정
+- [x] 전략 문서 작성 (`lv1b_uart_registers/20260329_uart_register_strategy.md`)
+- [ ] register wrapper RTL 작성
+- [ ] CPU-style read/write task 작성
+- [ ] TXDATA write 기반 smoke test PASS

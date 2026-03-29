@@ -4,7 +4,23 @@
 
 ---
 
-## 1. 목적
+## 1. 이 문서의 위치
+
+이 문서는 `lv1_uart_tx` 본선 실습에서 분리된
+companion track `lv1b_uart_registers`의 전략 문서다.
+
+분리 이유:
+
+- `lv1_uart_tx`는 UART 프로토콜과 UVM-inspired 검증 구조에 집중
+- register/MMIO/SW interaction은 별도 학습축으로 관리
+- 본선 커리큘럼이 옆길로 새지 않도록 구조를 분리
+
+즉, 이 문서는 `lv1_uart_tx`의 부록이 아니라
+`lv1b_uart_registers`의 시작 문서로 취급한다.
+
+---
+
+## 2. 목적
 
 현재 `lv1_uart_tx` 실습은 CPU가 `iTxData`, `iTxValid`, `oTxReady` 신호를 직접 다루는 구조다.
 즉, RTL 블록 입장에서는 송신기 동작을 잘 보여주지만,
@@ -22,12 +38,12 @@
 
 ---
 
-## 2. 현재 상태 요약
+## 3. 현재 상태 요약
 
 현재 구현은 다음과 같다.
 
-- DUT: `rtl/UART_Tx.sv`
-- TB: `tb/top/tb_top.sv`
+- UART TX 코어: `../lv1_uart_tx/rtl/UART_Tx.sv`
+- 현재 TB 기준점: `../lv1_uart_tx/tb/top/tb_top.sv`
 - CPU 역할: testbench driver task가 직접 `tx_data`, `tx_valid`를 구동
 - baud 설정: 파라미터 `BAUD_RATE`
 - 검증: monitor가 직렬 출력을 복원하고 scoreboard가 비교
@@ -46,7 +62,7 @@
 
 ---
 
-## 3. 이번 단계에서 얻고 싶은 체험
+## 4. 이번 단계에서 얻고 싶은 체험
 
 최종적으로는 사용자가 아래 흐름을 경험할 수 있어야 한다.
 
@@ -65,9 +81,9 @@ CPU(SW)
 
 ---
 
-## 4. 구현 방향
+## 5. 구현 방향
 
-### 4.1 권장 방향
+### 5.1 권장 방향
 
 권장 방향은 `기존 UART_Tx 코어는 그대로 두고`, 그 바깥에 레지스터 래퍼를 추가하는 것이다.
 
@@ -93,7 +109,7 @@ CPU read/write task
 - 실무적인 구조와 더 가까워짐
 - 나중에 APB/AHB-lite 같은 bus wrapper로 확장하기 쉬움
 
-### 4.2 비권장 방향
+### 5.2 비권장 방향
 
 `UART_Tx.sv` 내부에 레지스터 개념까지 한 번에 우겨 넣는 방식은 이번 단계에서 비권장이다.
 
@@ -105,9 +121,9 @@ CPU read/write task
 
 ---
 
-## 5. 제안 아키텍처
+## 6. 제안 아키텍처
 
-### 5.1 코어
+### 6.1 코어
 
 기존 `UART_Tx.sv`는 그대로 유지한다.
 
@@ -116,7 +132,7 @@ CPU read/write task
 - `iTxData`, `iTxValid`, `oTxReady` 인터페이스 유지
 - 실제 직렬화(FSM, baud timing, shift register) 담당
 
-### 5.2 래퍼
+### 6.2 래퍼
 
 새 모듈 예시 이름:
 
@@ -130,7 +146,7 @@ CPU read/write task
 - `TXDATA write`를 `iTxValid pulse`로 변환
 - `STATUS`와 `READY/BUSY`를 소프트웨어가 읽을 수 있게 제공
 
-### 5.3 TB CPU task
+### 6.3 TB CPU task
 
 Testbench에 `cpu_write()`, `cpu_read()` task를 만든다.
 
@@ -142,11 +158,11 @@ Testbench에 `cpu_write()`, `cpu_read()` task를 만든다.
 
 ---
 
-## 6. 레지스터 맵 제안
+## 7. 레지스터 맵 제안
 
 이번 단계는 교육 목적이므로 단순한 맵을 추천한다.
 
-### 6.1 최소 레지스터 맵
+### 7.1 최소 레지스터 맵
 
 ```text
 0x00  CTRL
@@ -155,28 +171,17 @@ Testbench에 `cpu_write()`, `cpu_read()` task를 만든다.
 0x0C  TXDATA
 ```
 
-### 6.2 각 레지스터 의미
+### 7.2 각 레지스터 의미
 
 #### CTRL (0x00)
 
 - bit[0] : `TX_EN`
 - bit[1] : `SOFT_RST` (선택)
 
-기본 역할:
-
-- UART TX 사용 여부 제어
-- 필요하면 소프트 리셋 실험 가능
-
 #### BAUD_DIV (0x04)
 
 - UART 비트 길이를 결정하는 분주값
 - 예: 50MHz 기준 `434`
-
-주의:
-
-- 현재 코어는 `BAUD_RATE` 파라미터 기반이라,
-  wrapper 단계에서 `BAUD_DIV`를 직접 코어에 연결하려면 코어 수정이 필요함
-- 이번 1차 전략에서는 `읽고/쓰는 경험` 우선인지, `실제 분주 반영`까지 포함할지 결정해야 함
 
 권장:
 
@@ -188,71 +193,27 @@ Testbench에 `cpu_write()`, `cpu_read()` task를 만든다.
 - bit[0] : `TX_READY`
 - bit[1] : `TX_BUSY`
 
-역할:
-
-- 소프트웨어가 `polling`으로 전송 가능 여부 확인
-
 #### TXDATA (0x0C)
 
 - write-only 8bit data
 - write 순간 내부에서 `iTxValid` pulse 생성
 
-역할:
-
-- SW가 “문자 1개 전송”하는 핵심 체험 포인트
-
 ---
 
-## 7. 단계별 구현 권장안
+## 8. 단계별 구현 권장안
 
 ### Phase 1. Wrapper만 추가하고 baud는 고정 유지
 
-목표:
-
-- SW가 레지스터를 write/read하는 체험 확보
-- 기존 코어 변경 최소화
-
-구현:
-
 - `CTRL`, `STATUS`, `TXDATA` 추가
-- `BAUD_DIV`는 일단 저장만 하고 실제 timing에는 미반영 가능
+- `BAUD_DIV`는 저장만 하고 실제 timing에는 미반영 가능
 - `TXDATA write` 시 `tx_ready && tx_en` 조건에서 코어로 전달
 
-장점:
-
-- 구현이 빠름
-- 현재 smoke test 구조를 크게 안 깨뜨림
-
-단점:
-
-- “BAUD_DIV를 SW가 진짜 바꿨다”는 하드웨어 감각은 반쪽짜리
-
 ### Phase 2. BAUD_DIV를 실제 코어 timing에 반영
-
-목표:
-
-- 레지스터 설정이 실제 전송 속도에 영향을 주도록 확장
-
-구현 후보:
 
 - `UART_Tx.sv`를 `BAUD_RATE` 대신 `iClksPerBit` 입력 기반으로 리팩터링
 - 또는 wrapper 내부에 baud tick generator를 두고 코어 FSM을 분리
 
-장점:
-
-- 교육 효과가 훨씬 큼
-- “SW 설정 -> HW 동작 변화”가 직접 연결됨
-
-단점:
-
-- 기존 코어 구조 변경 필요
-- Level 1 범위를 조금 넘길 수 있음
-
 ### Phase 3. CPU 시퀀스/로그 정리
-
-목표:
-
-- 사람이 읽기 쉬운 사용 흐름 확보
 
 예:
 
@@ -263,20 +224,11 @@ Testbench에 `cpu_write()`, `cpu_read()` task를 만든다.
 [CPU] write TXDATA    = 0x48 ('H')
 ```
 
-장점:
-
-- 실제 펌웨어 드라이버 감각을 많이 줌
-- 문서/면접 설명 자료로 좋음
-
 ---
 
-## 8. Testbench 변경 전략
-
-### 8.1 현재 구조 재사용
+## 9. Testbench 변경 전략
 
 현재 monitor와 scoreboard는 그대로 재사용한다.
-
-즉, 바뀌는 부분은 송신 입력 경로뿐이다.
 
 기존:
 
@@ -290,9 +242,7 @@ drv_q -> driver -> tx_data/tx_valid
 cpu_sequence -> cpu_write/cpu_read task -> reg wrapper -> UART_Tx
 ```
 
-### 8.2 추천 test 시나리오
-
-가장 먼저 구현할 smoke test:
+추천 smoke test:
 
 1. reset release
 2. `CTRL.TX_EN = 1`
@@ -302,91 +252,41 @@ cpu_sequence -> cpu_write/cpu_read task -> reg wrapper -> UART_Tx
 6. monitor가 `'H'` 복원
 7. scoreboard PASS
 
-그 다음 확장:
-
-- `"Hello"` 연속 전송
-- busy 중 write 시도 시 무시/에러 처리 확인
-- TX enable off 상태 write 동작 정의 확인
-
 ---
 
-## 9. 권장 인터페이스 복잡도
+## 10. 예상 파일 범위
 
-이번 레벨에서는 APB 같은 표준 bus를 바로 붙이지 않는 것을 권장한다.
-
-이유:
-
-- 지금 목표는 `UART peripheral register` 감각 체험
-- APB 자체 학습이 본론을 흐릴 수 있음
-- 주소/쓰기/읽기만 있는 단순 MMIO 스타일이면 충분함
-
-즉, 이번 전략의 핵심은:
-
-`표준 bus 학습`이 아니라 `레지스터 기반 peripheral 사용 경험`이다.
-
----
-
-## 10. 예상 파일 추가/변경 범위
-
-### 추가 후보
+추가 후보:
 
 - `rtl/UART_Tx_RegWrapper.sv`
 - `tb/top/tb_top_reg.sv` 또는 기존 `tb_top.sv` 확장
-- `20260329_uart_register_strategy.md` (현재 문서)
-
-### 수정 후보
-
 - `sim/run.sh`
-- `20260329_lv1_retrospective.md`
-- `uart_tx_demo.html` (선택: register 설정 시각화 추가)
+
+참고 기준점:
+
+- `../lv1_uart_tx/rtl/UART_Tx.sv`
+- `../lv1_uart_tx/tb/top/tb_top.sv`
 
 ---
 
 ## 11. 완료 기준
 
-이번 전략의 1차 완료 기준은 아래와 같다.
+1차 완료 기준:
 
-- SW 스타일 `cpu_write/cpu_read` task가 존재한다.
-- UART wrapper가 `CTRL / STATUS / TXDATA`를 제공한다.
-- `TXDATA write`가 실제 UART 전송으로 이어진다.
-- monitor/scoreboard가 기존과 동일하게 PASS를 낸다.
-- 시뮬레이션 로그에서 레지스터 write/read 흐름이 보인다.
+- SW 스타일 `cpu_write/cpu_read` task 존재
+- UART wrapper가 `CTRL / STATUS / TXDATA` 제공
+- `TXDATA write`가 실제 UART 전송으로 이어짐
+- monitor/scoreboard가 PASS
+- 시뮬레이션 로그에서 레지스터 write/read 흐름 확인 가능
 
 2차 완료 기준:
 
-- `BAUD_DIV` 설정이 실제 전송 timing 변화로 반영된다.
+- `BAUD_DIV` 설정이 실제 전송 timing 변화로 반영됨
 
 ---
 
-## 12. 추천 구현 순서
+## 12. 최종 권고
 
-가장 추천하는 진행 순서는 다음과 같다.
-
-1. 기존 `UART_Tx.sv`는 유지
-2. `UART_Tx_RegWrapper.sv` 추가
-3. TB에 `cpu_write/cpu_read` task 추가
-4. `'H'` 1바이트 smoke test 먼저 통과
-5. `"Hello"` 확장
-6. 필요하면 `BAUD_DIV` 실반영 리팩터링
-
-이 순서의 장점은:
-
-- 빠르게 첫 성공을 볼 수 있고
-- 기존 검증 자산을 버리지 않으며
-- 필요할 때만 complexity를 추가할 수 있다는 점이다.
-
----
-
-## 13. 최종 권고
-
-이번 단계의 최적 전략은 아래 한 문장으로 요약된다.
+이번 companion track의 최적 전략은 아래 한 문장으로 요약된다.
 
 `기존 UART_Tx 코어는 그대로 두고, 바깥에 register wrapper와 CPU read/write task를 얹어서 소프트웨어 레지스터 설정 경험을 먼저 확보한다.`
-
-즉, 지금 당장 가장 좋은 다음 수순은:
-
-- UART core 재작성
-가 아니라
-- UART peripheral wrapper 추가
-
-이다.
