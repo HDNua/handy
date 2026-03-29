@@ -32,7 +32,13 @@
 
 이 트랙이 `TASK_003`의 본선이다.
 
-### Main Level 1 — UART TX (UVM 기초 구조 체득)
+### Main Level 1 — UART Family
+
+Level 1은 UART를 송신기/수신기/통합의 세 단계로 쪼개서 진행한다.
+이렇게 하면 TX만 단독으로 이해하고 끝나는 것이 아니라,
+RX 복원 로직과 end-to-end loopback까지 자연스럽게 이어갈 수 있다.
+
+#### Level 1.1 — UART TX (직렬화 + 기본 검증 구조)
 
 ```
 CPU cfg → [UART TX DUT] → serial bitstream → monitor 복원 → scoreboard
@@ -41,6 +47,26 @@ CPU cfg → [UART TX DUT] → serial bitstream → monitor 복원 → scoreboard
 - **응용**: PC와 보드가 시리얼 케이블로 통신
 - **핵심 학습**: seq_item / driver / monitor / scoreboard 기본 구조
 - **RTL 복잡도**: baud rate divider + shift register FSM, 단순
+
+#### Level 1.2 — UART RX (샘플링 + 바이트 복원)
+
+```text
+serial bitstream -> [UART RX DUT] -> rx_data/rx_valid -> scoreboard
+```
+
+- **응용**: 외부 장치가 보낸 UART 프레임을 수신하여 바이트 복원
+- **핵심 학습**: start bit detect, 1.5 baud sample, stop bit/framing error
+- **RTL 복잡도**: 단순~중간
+
+#### Level 1.3 — UART Integration (TX -> RX loopback)
+
+```text
+[UART TX] -> serial line -> [UART RX] -> scoreboard
+```
+
+- **응용**: 송신기/수신기 end-to-end loopback
+- **핵심 학습**: 두 DUT 연결, end-to-end 검증, monitor와 DUT 역할 구분
+- **RTL 복잡도**: Level 1.1 + Level 1.2 재사용
 
 ### Main Level 2 — I2C Master (프로토콜 handshake + monitor 복잡도 UP)
 
@@ -79,7 +105,7 @@ CPU cfg → [I2C Master DUT] → SCL/SDA → monitor 프레임 복원 → slave 
 
 분리 이유:
 
-- `lv1_uart_tx`의 초점을 UART 프로토콜 + monitor/scoreboard 구조에 유지
+- `lv1_1_uart_tx`의 초점을 UART 프로토콜 + monitor/scoreboard 구조에 유지
 - MMIO/register map 학습이 본선 커리큘럼을 흐리지 않게 관리
 - 필요할 때만 register wrapper, polling, TXDATA write 흐름을 별도 실습으로 확장
 
@@ -99,7 +125,7 @@ CPU write/read -> [UART Register Wrapper] -> [UART TX] -> serial bitstream
 
 ```
 study/260329_uvm_curriculum/
-├── lv1_uart_tx/
+├── lv1_1_uart_tx/
 │   ├── rtl/
 │   │   └── UART_Tx.sv
 │   ├── tb/
@@ -108,6 +134,16 @@ study/260329_uvm_curriculum/
 │   │   ├── top/tb_top.sv
 │   │   └── test/smoke_test.sv
 │   └── sim/run.sh
+├── lv1_2_uart_rx/
+│   ├── 20260329_lv1_2_uart_rx_plan.md
+│   ├── rtl/
+│   ├── tb/
+│   └── sim/
+├── lv1_3_uart_integration/
+│   ├── 20260329_lv1_3_uart_integration_plan.md
+│   ├── rtl/
+│   ├── tb/
+│   └── sim/
 ├── lv1b_uart_registers/
 │   ├── 20260329_uart_register_strategy.md
 │   ├── rtl/
@@ -179,7 +215,7 @@ study/260329_uvm_curriculum/
 
 ### Main Track
 
-#### Level 1 — UART TX ✅ (2026-03-29 완료)
+#### Level 1.1 — UART TX ✅ (2026-03-29 완료)
 - [x] RTL 작성 (UART_Tx.sv) — IDLE→START→DATA→STOP FSM
 - [x] tb_top.sv — clk/rst, DUT 연결, VCD dump
 - [x] sequence (drv_q 적재)
@@ -188,6 +224,17 @@ study/260329_uvm_curriculum/
 - [x] scoreboard (event 기반 expected vs actual 비교)
 - [x] smoke test PASS — "Hello" 5바이트 PASS 5 / FAIL 0
 - [ ] coverage 추가 (선택)
+
+#### Level 1.2 — UART RX
+- [ ] RTL 작성 (`UART_Rx.sv`)
+- [ ] start bit detect + 1.5 baud 샘플링 구현
+- [ ] rx_data / rx_valid / framing error 정의
+- [ ] smoke test PASS
+
+#### Level 1.3 — UART Integration
+- [ ] UART TX + UART RX loopback 연결
+- [ ] end-to-end scoreboard 작성
+- [ ] integration smoke test PASS
 
 #### Level 2 — I2C Master
 - [ ] RTL 작성

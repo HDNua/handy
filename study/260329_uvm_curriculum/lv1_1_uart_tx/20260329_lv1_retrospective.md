@@ -1,4 +1,4 @@
-# Level 1 — UART TX UVM 실습 회고
+# Level 1.1 — UART TX UVM 실습 회고
 
 작성일: 2026-03-29
 
@@ -6,7 +6,7 @@
 
 ## 1. 무엇을 만들었나
 
-**DUT**: `uart_tx.sv` — UART 송신기 (50MHz 클럭, 115200 baud)
+**DUT**: `UART_Tx.sv` — UART 송신기 (50MHz 클럭, 115200 baud)
 
 ```
 FSM: IDLE → START → DATA(×8, LSB first) → STOP → IDLE
@@ -94,7 +94,7 @@ tx_serial: 1 1 1 [0][d0][d1][d2][d3][d4][d5][d6][d7][1] 1 1
 ## 5. 파일 구조
 
 ```
-lv1_uart_tx/
+lv1_1_uart_tx/
 ├── rtl/
 │   └── UART_Tx.sv                         DUT
 ├── tb/
@@ -115,14 +115,65 @@ lv1_uart_tx/
 └── 20260329_uart_concept_notes.md         UART 개념 정리 메모
 ```
 
-레지스터 기반 peripheral 체험은 본선 `lv1_uart_tx`와 분리하여
+레지스터 기반 peripheral 체험은 본선 `lv1_1_uart_tx`와 분리하여
 별도 companion track `../lv1b_uart_registers/`로 옮겼다.
 
 ---
 
-## 6. 다음 레벨에서 개선할 점
+## 6. RTL 리뷰 — IDLE 상태 이중 assign 문제 및 수정
 
+### 문제
+
+초기 IDLE 구현에서 동일 신호에 두 번 assign하는 패턴이 있었다.
+
+```sv
+// 문제가 있던 코드
+IDLE: begin
+    oTxSerial <= 1'b1;   // 무조건 assign
+    oTxReady  <= 1'b1;   // 무조건 assign
+    ...
+    if (iTxValid) begin
+        oTxReady  <= 1'b0;   // 조건부 override
+        rState    <= START;
+    end
+end
+```
+
+`always_ff` 안에서 같은 신호를 두 번 assign하면 **마지막 assign이 이긴다.** 동작은 맞지만:
+- 읽는 사람이 "oTxReady가 결국 어떤 값인지" 한 번에 파악하기 어렵다
+- 의도가 명확하지 않아 리뷰/디버깅 시 혼란을 줄 수 있다
+
+### 수정
+
+`if/else`로 명확하게 분기하여 신호당 assign이 한 번만 일어나도록 변경했다.
+
+```sv
+// 수정된 코드
+IDLE: begin
+    rBaudCnt  <= '0;
+    rBitIdx   <= '0;
+    if (iTxValid) begin
+        rShiftReg <= iTxData;
+        oTxReady  <= 1'b0;
+        oTxSerial <= 1'b1;
+        rState    <= START;
+    end else begin
+        oTxReady  <= 1'b1;
+        oTxSerial <= 1'b1;
+    end
+end
+```
+
+### 원칙
+
+> RTL에서 동일 신호에 대한 이중 assign은 동작은 맞더라도 가독성과 리뷰 용이성을 해친다.
+> 조건에 따라 값이 달라지는 신호는 반드시 `if/else`로 명확하게 분기할 것.
+
+---
+
+## 7. 다음 서브레벨에서 이어갈 점
+
+- Level 1.2 (`UART RX`)에서 start bit detect, 1.5 baud 샘플링, framing error를 RTL로 직접 구현
+- Level 1.3 (`UART Integration`)에서 TX -> RX loopback과 end-to-end scoreboard 구성
 - monitor의 start bit 감지를 idle→low 전환으로 더 견고하게
-- scoreboard에 타임아웃 추가 (무한 대기 방지)
 - coverage 추가 (전송 바이트 값 범위)
-- Level 2 (I2C Master)에서는 양방향 신호(SDA) + ACK/NACK 처리 추가

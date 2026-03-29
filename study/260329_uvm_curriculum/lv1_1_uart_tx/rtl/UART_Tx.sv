@@ -142,14 +142,16 @@ module UART_Tx #(
                 // iTxValid pulse 감지 시 데이터 래치 후 START 로 전이
                 // -------------------------------------------------------------
                 IDLE: begin
-                    oTxSerial <= 1'b1;
-                    oTxReady  <= 1'b1;
                     rBaudCnt  <= '0;
                     rBitIdx   <= '0;
                     if (iTxValid) begin
                         rShiftReg <= iTxData;   // 전송 데이터 래치
                         oTxReady  <= 1'b0;      // 전송 중 → 새 요청 불가
+                        oTxSerial <= 1'b1;
                         rState    <= START;
+                    end else begin
+                        oTxReady  <= 1'b1;
+                        oTxSerial <= 1'b1;
                     end
                 end
 
