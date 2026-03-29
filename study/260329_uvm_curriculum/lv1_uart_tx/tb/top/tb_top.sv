@@ -47,16 +47,16 @@ module tb_top;
     // -------------------------------------------------------------------------
     // DUT
     // -------------------------------------------------------------------------
-    uart_tx #(
+    UART_Tx #(
         .CLK_FREQ  (CLK_FREQ),
         .BAUD_RATE (BAUD_RATE)
-    ) u_dut (
-        .clk       (clk),
-        .rst_n     (rst_n),
-        .tx_data   (tx_data),
-        .tx_valid  (tx_valid),
-        .tx_ready  (tx_ready),
-        .tx_serial (tx_serial)
+    ) A_UART_Tx (
+        .iClk     (clk),
+        .iRsn     (rst_n),
+        .iTxData  (tx_data),
+        .iTxValid (tx_valid),
+        .oTxReady (tx_ready),
+        .oTxSerial(tx_serial)
     );
 
     // -------------------------------------------------------------------------

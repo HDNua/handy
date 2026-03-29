@@ -1,43 +1,42 @@
 // =============================================================================
-// uart_tx.sv
-// Simple UART Transmitter
+// uart_tx.sv — UART 송신기
 //
-// Parameters:
-//   CLK_FREQ  : system clock frequency in Hz (default 50MHz)
-//   BAUD_RATE : baud rate (default 115200)
+// 파라미터:
+//   CLK_FREQ  : 시스템 클럭 주파수 (Hz, 기본 50MHz)
+//   BAUD_RATE : 전송 속도 (기본 115200)
 //
-// Interface:
-//   tx_data   : 8-bit data to transmit
-//   tx_valid  : pulse high 1 cycle to start transmission
-//   tx_ready  : high when idle (ready to accept new data)
-//   tx_serial : serial output line (idle = 1)
+// 네이밍 규칙:
+//   iClk/iRsn : 클럭/리셋
+//   i*        : 입력 포트
+//   o*        : 출력 포트
+//   r*        : 내부 레지스터 (FF 구동)
 //
-// Frame format: 1 start bit (0), 8 data bits (LSB first), 1 stop bit (1)
+// 프레임 포맷: start(0) + 데이터 8비트(LSB first) + stop(1)
 // =============================================================================
 
-module uart_tx #(
+module UART_Tx #(
     parameter int CLK_FREQ  = 50_000_000,
     parameter int BAUD_RATE = 115_200
 ) (
-    input  logic       clk,
-    input  logic       rst_n,
+    input  logic       iClk,
+    input  logic       iRsn,
 
-    // CPU interface
-    input  logic [7:0] tx_data,
-    input  logic       tx_valid,
-    output logic       tx_ready,
+    // CPU 인터페이스
+    input  logic [7:0] iTxData,
+    input  logic       iTxValid,
+    output logic       oTxReady,
 
-    // Serial output
-    output logic       tx_serial
+    // 직렬 출력
+    output logic       oTxSerial
 );
 
     // -------------------------------------------------------------------------
-    // Baud rate divider
+    // Baud rate 분주
     // -------------------------------------------------------------------------
     localparam int CLKS_PER_BIT = CLK_FREQ / BAUD_RATE;
 
     // -------------------------------------------------------------------------
-    // FSM states
+    // FSM 상태 정의
     // -------------------------------------------------------------------------
     typedef enum logic [2:0] {
         IDLE  = 3'd0,
@@ -46,78 +45,77 @@ module uart_tx #(
         STOP  = 3'd3
     } state_t;
 
-    state_t state;
+    // -------------------------------------------------------------------------
+    // 내부 레지스터
+    // -------------------------------------------------------------------------
+    state_t                            rState;
+    logic [$clog2(CLKS_PER_BIT)-1:0]  rBaudCnt;   // Baud 클럭 카운터
+    logic [2:0]                        rBitIdx;    // 현재 전송 중인 비트 인덱스 (0~7)
+    logic [7:0]                        rShiftReg;  // TX 시프트 레지스터
 
     // -------------------------------------------------------------------------
-    // Internal registers
+    // FSM + 데이터패스
     // -------------------------------------------------------------------------
-    logic [$clog2(CLKS_PER_BIT)-1:0] baud_cnt;   // baud clock counter
-    logic [2:0]                        bit_idx;    // current data bit index (0~7)
-    logic [7:0]                        shift_reg;  // TX shift register
-
-    // -------------------------------------------------------------------------
-    // FSM + datapath
-    // -------------------------------------------------------------------------
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            state     <= IDLE;
-            baud_cnt  <= '0;
-            bit_idx   <= '0;
-            shift_reg <= '0;
-            tx_serial <= 1'b1;   // idle line high
-            tx_ready  <= 1'b1;
+    always_ff @(posedge iClk or negedge iRsn) begin
+        if (!iRsn) begin
+            rState    <= IDLE;
+            rBaudCnt  <= '0;
+            rBitIdx   <= '0;
+            rShiftReg <= '0;
+            oTxSerial <= 1'b1;   // idle: 선을 high로 유지
+            oTxReady  <= 1'b1;
         end else begin
-            case (state)
+            case (rState)
 
                 IDLE: begin
-                    tx_serial <= 1'b1;
-                    tx_ready  <= 1'b1;
-                    baud_cnt  <= '0;
-                    bit_idx   <= '0;
-                    if (tx_valid) begin
-                        shift_reg <= tx_data;
-                        tx_ready  <= 1'b0;
-                        state     <= START;
+                    oTxSerial <= 1'b1;
+                    oTxReady  <= 1'b1;
+                    rBaudCnt  <= '0;
+                    rBitIdx   <= '0;
+                    if (iTxValid) begin
+                        rShiftReg <= iTxData;
+                        oTxReady  <= 1'b0;
+                        rState    <= START;
                     end
                 end
 
                 START: begin
-                    tx_serial <= 1'b0;   // start bit
-                    if (baud_cnt == CLKS_PER_BIT - 1) begin
-                        baud_cnt <= '0;
-                        state    <= DATA;
+                    oTxSerial <= 1'b0;   // start bit
+                    if (rBaudCnt == CLKS_PER_BIT - 1) begin
+                        rBaudCnt <= '0;
+                        rState   <= DATA;
                     end else begin
-                        baud_cnt <= baud_cnt + 1;
+                        rBaudCnt <= rBaudCnt + 1;
                     end
                 end
 
                 DATA: begin
-                    tx_serial <= shift_reg[bit_idx];   // LSB first
-                    if (baud_cnt == CLKS_PER_BIT - 1) begin
-                        baud_cnt <= '0;
-                        if (bit_idx == 3'd7) begin
-                            bit_idx <= '0;
-                            state   <= STOP;
+                    oTxSerial <= rShiftReg[rBitIdx];   // LSB first 직렬 출력
+                    if (rBaudCnt == CLKS_PER_BIT - 1) begin
+                        rBaudCnt <= '0;
+                        if (rBitIdx == 3'd7) begin
+                            rBitIdx <= '0;
+                            rState  <= STOP;
                         end else begin
-                            bit_idx <= bit_idx + 1;
+                            rBitIdx <= rBitIdx + 1;
                         end
                     end else begin
-                        baud_cnt <= baud_cnt + 1;
+                        rBaudCnt <= rBaudCnt + 1;
                     end
                 end
 
                 STOP: begin
-                    tx_serial <= 1'b1;   // stop bit
-                    if (baud_cnt == CLKS_PER_BIT - 1) begin
-                        baud_cnt <= '0;
-                        state    <= IDLE;
-                        tx_ready <= 1'b1;
+                    oTxSerial <= 1'b1;   // stop bit
+                    if (rBaudCnt == CLKS_PER_BIT - 1) begin
+                        rBaudCnt <= '0;
+                        rState   <= IDLE;
+                        oTxReady <= 1'b1;
                     end else begin
-                        baud_cnt <= baud_cnt + 1;
+                        rBaudCnt <= rBaudCnt + 1;
                     end
                 end
 
-                default: state <= IDLE;
+                default: rState <= IDLE;
 
             endcase
         end

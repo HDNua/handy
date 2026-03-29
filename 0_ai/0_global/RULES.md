@@ -1,49 +1,45 @@
 # RULES
 
-This file defines the strict rules and guidelines for the AI agent working on the "resume" project.
-The AI agent must always refer to this file to ensure consistency in **Workflow, File Management, and Communication**.
+이 파일은 "resume" 프로젝트에서 AI 에이전트가 따라야 할 규칙과 가이드라인을 정의한다.
+**워크플로우, 파일 관리, 커뮤니케이션** 전반에 걸쳐 항상 이 파일을 기준으로 삼는다.
 
-## 1. General Workflow & Communication
-*   **Language**:
-    *   **Always use Korean** for both conversation (responses) and documentation.
-    *   (Exception: Code variable names or specific technical terms can remain in English).
-*   **Documentation Location**:
-    *   All common/shared documentation must be placed in **`0_ai/0_global/`** (or its subfolders like `manuals/`).
-    *   **Do NOT** create documentation files scattered across other project directories (e.g., inside `res/1_samsung/...`).
-*   **Mermaid Diagrams**:
-    *   **Always separate Mermaid diagrams** into their own dedicated `.md` files (e.g., `*_Diagrams.md`).
-    *   Do not embed large Mermaid blocks inside the main text-heavy documents; link to them instead.
+## 1. 일반 워크플로우 및 커뮤니케이션
 
-## 2. Task Management System
-Maintain a strict task lifecycle using the following directories:
+- **언어**: 대화(응답)와 문서 작성 모두 **한국어** 사용
+  - 예외: 코드 변수명, 특정 기술 용어는 영어 허용
+- **문서 위치**:
+  - 공용/공유 문서는 반드시 **`0_ai/0_global/`** (또는 하위 폴더 `manuals/` 등)에 저장
+  - `res/1_samsung/...` 등 개별 프로젝트 디렉토리에 문서 분산 저장 **금지**
+- **Mermaid 다이어그램**:
+  - 별도 `.md` 파일로 분리 (예: `*_Diagrams.md`)
+  - 본문 문서에 대형 Mermaid 블록 직접 삽입 금지 — 링크로 참조
 
-*   **Active Tasks**:
-    *   Location: **`0_ai/0_global/active_tasks/`**
-    *   Only currently in-progress or planned tasks reside here.
-    *   Format: `TASK_{Number}_{Description}.md`
-*   **Archived Tasks**:
-    *   Location: **`0_ai/0_global/archived_tasks/`**
-    *   Move completed tasks here.
-*   **Development Logs**:
-    *   Location: **`0_ai/0_global/dev_logs/`**
-    *   When a task is completed/archived, create a log file here summarizing the work done.
+## 2. 태스크 관리 시스템
 
-## 3. Writing Guidelines (Tone & Style)
-*   **Professionalism**: All content must be professional, clear, and concise.
-*   **Objectivity**: Focus on facts, numbers, and engineering logic.
-*   **Terminology**: Use industry-standard terms (AXI, UVM, HBM, TDD, OOP, VIP) correctly.
+| 상태 | 위치 | 규칙 |
+|---|---|---|
+| 진행 중 / 예정 | `0_ai/0_global/active_tasks/` | 파일명: `TASK_{번호}_{설명}.md` |
+| 완료 | `0_ai/0_global/archived_tasks/` | 완료 시 이동 |
+| 개발 로그 | `0_ai/0_global/dev_logs/` | 태스크 완료/아카이브 시 작업 요약 로그 생성 |
 
-## 4. Promotion Application (승격 지원서) Specific Rules
-When asked to write a promotion application (승격 지원서), adhere to the following strict constraints:
+## 3. 작성 스타일
 
-1.  **Avoid Hyperbole**:
-    *   **NEVER** use exaggerated adjectives such as "획기적으로" (groundbreakingly), "혁신적인" (innovative), or "탁월한" (outstanding).
-    *   Instead, use specific metrics (e.g., "O% 개선", "시간 단축").
-2.  **Length Constraint**:
-    *   The total length MUST be **between 900 and 1000 Korean characters (ja)** including spaces.
-3.  **Formatting**:
-    *   No unnecessary paragraph breaks. Dense text is preferred.
-    *   **Do NOT** include greetings or closing remarks (e.g., "감사합니다").
-    *   Start directly with the core content.
-4.  **Narrative Structure**:
-    *   Problem (Challenge) -> Action (Solution) -> Result (Impact).
+- **전문성**: 모든 내용은 명확하고 간결하게
+- **객관성**: 사실, 수치, 엔지니어링 논리 중심으로 서술
+- **용어**: 업계 표준 용어(AXI, UVM, HBM, TDD, OOP, VIP) 정확하게 사용
+
+## 4. 승격 지원서 작성 규칙
+
+승격 지원서 작성 요청 시 아래 제약을 엄격히 준수한다.
+
+1. **과장 표현 금지**
+   - "획기적으로", "혁신적인", "탁월한" 등 과장 형용사 사용 **금지**
+   - 대신 구체적 수치 사용 (예: "O% 개선", "시간 단축")
+2. **분량 제한**
+   - 전체 길이는 공백 포함 **900~1000자(한글 기준)** 엄수
+3. **포맷**
+   - 불필요한 단락 구분 없이 밀도 있게 작성
+   - 인사말/맺음말("감사합니다" 등) **불포함**
+   - 핵심 내용으로 바로 시작
+4. **서술 구조**
+   - 문제(과제) → 행동(해결책) → 결과(임팩트)
