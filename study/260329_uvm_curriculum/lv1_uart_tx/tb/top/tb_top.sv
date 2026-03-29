@@ -74,6 +74,9 @@ module tb_top;
     logic [7:0] mon_q[$];   // monitor  → scoreboard
     logic [7:0] exp_q[$];   // expected value
 
+    // monitor가 데이터를 push할 때 scoreboard를 깨우는 event
+    event mon_data_ready;
+
     int pass_cnt = 0;
     int fail_cnt = 0;
 
@@ -81,7 +84,7 @@ module tb_top;
     // DRIVER  (uvm_driver::run_phase)
     // drv_q에서 바이트를 꺼내 DUT tx_data/tx_valid 구동
     // -------------------------------------------------------------------------
-    task automatic uart_driver(int num_bytes);
+    task uart_driver(int num_bytes);
         logic [7:0] data;
         repeat (num_bytes) begin
             // sequence가 item을 넣을 때까지 대기
@@ -109,11 +112,13 @@ module tb_top;
     // MONITOR  (uvm_monitor::run_phase)
     // tx_serial 비트스트림 샘플링 → 바이트 복원 → mon_q push
     // -------------------------------------------------------------------------
-    task automatic uart_monitor(int num_bytes);
+    task uart_monitor(int num_bytes);
         logic [7:0] captured;
         repeat (num_bytes) begin
-            // start bit 감지 (1→0 edge)
-            @(negedge tx_serial);
+            // start bit 감지: tx_serial이 1(idle)인 동안 대기 후 0 감지
+            @(posedge clk);
+            while (tx_serial !== 1'b1) @(posedge clk);  // idle 확인
+            while (tx_serial !== 1'b0) @(posedge clk);  // start bit 감지
 
             // start bit 시작 → 1.5 baud 후 = bit[0] 중앙
             repeat (CLKS_PER_BIT + CLKS_PER_BIT / 2) @(posedge clk);
@@ -131,6 +136,7 @@ module tb_top;
 
             $display("[MON] captured: 0x%02h", captured);
             mon_q.push_back(captured);
+            ->mon_data_ready;
         end
     endtask
 
@@ -138,11 +144,11 @@ module tb_top;
     // SCOREBOARD  (uvm_scoreboard::run_phase)
     // mon_q actual vs exp_q expected 비교
     // -------------------------------------------------------------------------
-    task automatic uart_scoreboard(int num_bytes);
+    task uart_scoreboard(int num_bytes);
         logic [7:0] actual;
         logic [7:0] expected;
         repeat (num_bytes) begin
-            wait (mon_q.size() > 0);
+            @(mon_data_ready);
             actual   = mon_q.pop_front();
             expected = exp_q.pop_front();
             if (actual === expected) begin
@@ -176,7 +182,7 @@ module tb_top;
         tx_data  = 0;
 
         // reset 완료 대기
-        @(posedge rst_n);
+        wait (rst_n === 1'b1);
         @(posedge clk);
 
         // sequence: payload → drv_q + exp_q 적재

@@ -1,0 +1,7 @@
+# Simulation outputs
+*.vcd
+*.vvp
+*_sim
+
+# macOS
+.DS_Store

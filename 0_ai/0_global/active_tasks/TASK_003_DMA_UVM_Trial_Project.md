@@ -123,21 +123,36 @@ study/260329_uvm_curriculum/
 
 ---
 
+## iverilog 13 호환성 메모
+
+실습 중 발견한 iverilog 제약 및 대안. 다음 레벨 작업 시 참고.
+
+| 제약 | 증상 | 대안 |
+|---|---|---|
+| `mailbox #(type)` 미지원 | compile error: mailbox doesn't name a type | queue + event 조합으로 대체 |
+| `automatic` task 내 edge event | runtime abort: vvp_fun_anyedge_aa | `automatic` 제거 |
+| `@(negedge signal)` in task | 동일 runtime abort | clk 기반 폴링으로 대체 |
+| `wait(queue.size() > 0)` | 조건 재평가 안 됨 → hang | `event` trigger + `@(event)` 대체 |
+| initial 블록 내 변수 초기화 | static variable initialization warning | 모듈 레벨 선언으로 이동 |
+| `package` 내 class with task | 미지원 | 단일 module 내 task로 flatten |
+
+---
+
 ## 진행 현황
 
-### Level 1 — UART TX
-- [ ] RTL 작성 (uart_tx.sv)
-- [ ] interface + tb_top
-- [ ] seq_item + driver
-- [ ] monitor + scoreboard
-- [ ] smoke test PASS
-- [ ] coverage 추가
+### Level 1 — UART TX ✅ (2026-03-29 완료)
+- [x] RTL 작성 (uart_tx.sv) — IDLE→START→DATA→STOP FSM
+- [x] tb_top.sv — clk/rst, DUT 연결, VCD dump
+- [x] sequence (drv_q 적재)
+- [x] driver (tx_data/tx_valid 구동)
+- [x] monitor (tx_serial 비트스트림 → 바이트 복원)
+- [x] scoreboard (event 기반 expected vs actual 비교)
+- [x] smoke test PASS — "Hello" 5바이트 PASS 5 / FAIL 0
+- [ ] coverage 추가 (선택)
 
 ### Level 2 — I2C Master
 - [ ] RTL 작성
-- [ ] interface + tb_top
-- [ ] driver (START/ADDR/DATA/STOP 시퀀스)
-- [ ] monitor (비트스트림 → 프레임 복원)
+- [ ] tb_top (driver: START/ADDR/DATA/STOP, monitor: 프레임 복원)
 - [ ] slave stub (ACK/NACK)
 - [ ] smoke test PASS
 
@@ -148,6 +163,6 @@ study/260329_uvm_curriculum/
 - [ ] smoke test PASS
 
 ### Level 4 — DMA + UART TX
-- [ ] 시스템 통합 env
-- [ ] 두 agent 연결
+- [ ] 시스템 통합
+- [ ] 두 DUT 연결
 - [ ] 시스템 레벨 smoke test PASS
