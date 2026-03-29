@@ -184,10 +184,47 @@
     position: relative;
   }
 
+  .sender-shell {
+    position: absolute;
+    top: 24px;
+    left: 20px;
+    width: 430px;
+    height: 455px;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.08), rgba(15, 23, 42, 0.04));
+    box-shadow: inset 0 0 40px rgba(59, 130, 246, 0.06);
+    z-index: 1;
+  }
+
+  .sender-shell-title {
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent-blue);
+    letter-spacing: 0.04em;
+    background: rgba(15, 23, 42, 0.9);
+    padding: 0 6px;
+    border-radius: 6px;
+  }
+
+  .sender-shell-sub {
+    position: absolute;
+    top: 42px;
+    left: 18px;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(15, 23, 42, 0.75);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
   /* CPU Box */
   .cpu-box {
     position: absolute;
-    top: 50px;
+    top: 86px;
     left: 40px;
     width: 140px;
     height: 90px;
@@ -208,10 +245,10 @@
   /* Parallel Bus wires */
   .parallel-bus {
     position: absolute;
-    top: 150px;
+    top: 186px;
     left: 80px;
     width: 60px;
-    height: 110px;
+    height: 74px;
     display: flex;
     justify-content: space-between;
     opacity: 0.3;
@@ -409,29 +446,68 @@
     100% { left: 300px; opacity: 0; transform: scale(0.5); }
   }
 
-  /* Receiver Box */
+  /* Receiver Device */
   .rx-box {
     position: absolute;
-    top: 275px;
+    top: 238px;
     right: 40px;
-    width: 140px;
-    height: 170px;
-    background: rgba(30, 41, 59, 0.9);
-    border: 2px solid var(--accent-green);
-    border-radius: 12px;
+    width: 190px;
+    height: 230px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(16, 185, 129, 0.45);
+    border-radius: 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 20px;
+    padding-top: 18px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     z-index: 10;
   }
   
-  .rx-title { font-weight: 800; font-size: 18px; color: #fff; }
-  .rx-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; text-align:center; padding: 0 10px;}
+  .rx-title {
+    font-weight: 800;
+    font-size: 17px;
+    color: #fff;
+    letter-spacing: 0.03em;
+  }
+  .rx-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    text-align: center;
+    line-height: 1.45;
+    padding: 0 14px;
+  }
+
+  .rx-core {
+    margin-top: 18px;
+    width: 124px;
+    height: 78px;
+    border: 2px dashed var(--accent-green);
+    border-radius: 14px;
+    background: rgba(30, 41, 59, 0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 12px rgba(16, 185, 129, 0.12);
+  }
+
+  .rx-core-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent-green);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .rx-core-sub {
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
   
   .rx-data-display {
-    margin-top: 20px;
+    margin-top: 18px;
     width: 100px;
     height: 50px;
     background: #000;
@@ -478,7 +554,8 @@
   <header>
     <h1>UART TX 톺아보기 (초등학생도 이해가능!)</h1>
     <div class="sub">
-      CPU가 데이터를 써주면, UART 내부의 <b>상태 머신(FSM)</b>과 <b>Shift Register(시프트 레지스터)</b>가 어떻게<br>동작하여 8개의 비트를 하나의 좁은 선으로 차례차례 보내는지 직관적으로 알아봅니다.
+      CPU가 데이터를 써주면, UART 내부의 <b>상태 머신(FSM)</b>과 <b>Shift Register(시프트 레지스터)</b>가 어떻게<br>동작하여 8개의 비트를 하나의 좁은 선으로 차례차례 보내는지 직관적으로 알아봅니다.<br>
+      오른쪽은 <b>Receiver Device</b>이고, 그 안의 <b>UART RX</b>가 직렬 비트를 받아 다시 1바이트로 조립합니다.
     </div>
   </header>
 
@@ -489,7 +566,7 @@
         <div class="btns">
           <button id="btn1" onclick="playMode(1)" class="active">1. 짐 싣기 (Parallel Load)</button>
           <button id="btn2" onclick="playMode(2)">2. 한 줄 세우기 (Shift & FSM)</button>
-          <button id="btn3" onclick="playMode(3)">3. 다시 조립하기 (Monitor/Scoreboard)</button>
+          <button id="btn3" onclick="playMode(3)">3. 다시 조립하기 (UART RX/TB Monitor)</button>
         </div>
 
         <div class="status-box" id="statusBox">
@@ -507,11 +584,16 @@
     <div class="right-col">
       <div class="panel stage">
         <div class="visualization" id="vis">
+
+          <div class="sender-shell">
+            <div class="sender-shell-title">SENDER SIDE</div>
+            <div class="sender-shell-sub">CPU와 UART TX는 같은 시스템 안에 있습니다.</div>
+          </div>
           
           <!-- CPU -->
           <div class="cpu-box" id="obj-cpu">
             <div class="cpu-title">CPU</div>
-            <div class="cpu-sub">데이터 생산자</div>
+            <div class="cpu-sub">송신측 제어기</div>
           </div>
 
           <!-- Parallel Wires -->
@@ -552,10 +634,14 @@
             <div class="flying-bit" id="fly-bit"></div>
           </div>
 
-          <!-- Receiver Block -->
+          <!-- Receiver Device -->
           <div class="rx-box" id="obj-rx">
-            <div class="rx-title">Monitor PC</div>
-            <div class="rx-sub">흩어진 비트를 모아 문자로!</div>
+            <div class="rx-title">Receiver Device</div>
+            <div class="rx-sub">이 장치 안의 UART RX가 직렬 비트를 받아 다시 조립합니다.</div>
+            <div class="rx-core">
+              <div class="rx-core-title">UART RX</div>
+              <div class="rx-core-sub">serial -> byte</div>
+            </div>
             <div class="rx-data-display" id="rx-display">--</div>
           </div>
 
@@ -695,7 +781,8 @@
         els.statusBox.innerHTML = `
           <strong style="color:var(--accent-purple)">Step 1: START Bit (상태: START)</strong><br>
           "자, 지금부터 데이터 보낸다!" 하고 신호를 주기 위해 선을 0으로 확 끌어내립니다.<br>
-          반대편에 있는 구경꾼(Monitor)은 이 스위치가 내려가는 걸 보고 집중하기 시작합니다.
+          반대편의 실제 수신기(UART RX)는 이 하강 신호를 보고 "프레임이 시작됐구나" 하고 샘플링 준비를 시작합니다.<br>
+          <i>Testbench에서는 이 RX 동작을 monitor가 흉내 냅니다.</i>
         `;
       } 
       else if (currentStep >= 2 && currentStep <= 9) {
@@ -748,9 +835,9 @@
       }, 300);
 
       els.statusBox.innerHTML = `
-        <strong style="color:var(--accent-green)">데이터 조립 완료! (Monitor / Scoreboard)</strong><br>
-        반대편에 있던 Testbench의 Monitor는 선이 떨어지는(0이 되는) 순간 시계를 켭니다.<br>
-        그리고 정확한 박자(Baud rate)마다 선을 읽어들여 <b>01001000</b> 조각들을 다시 모았습니다.<br>
+        <strong style="color:var(--accent-green)">데이터 조립 완료! (UART RX / TB Monitor)</strong><br>
+        실제 시스템에서는 Receiver Device 안의 UART RX가 start bit를 보고 타이밍을 맞춘 뒤, 비트를 읽어 <b>1바이트</b>로 다시 조립합니다.<br>
+        이번 Testbench에서는 그 RX 역할을 <b>monitor</b>가 흉내 내며, <b>01001000</b>을 다시 모아 'H'로 복원합니다.<br>
         <i>스코어보드(Scoreboard): "음, CPU가 보낸 'H'가 무사히 도착했군! PASS!"</i>
       `;
     }

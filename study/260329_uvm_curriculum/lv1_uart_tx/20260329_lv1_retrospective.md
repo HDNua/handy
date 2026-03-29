@@ -96,14 +96,24 @@ tx_serial: 1 1 1 [0][d0][d1][d2][d3][d4][d5][d6][d7][1] 1 1
 ```
 lv1_uart_tx/
 ├── rtl/
-│   └── uart_tx.sv          DUT
+│   └── UART_Tx.sv                         DUT
 ├── tb/
+│   ├── if/
+│   │   └── uart_if.sv                     초기 class 기반 시도
+│   ├── pkg/
+│   │   └── uart_pkg.sv                    초기 class 기반 시도
+│   ├── test/
+│   │   └── smoke_test.sv                  초기 class 기반 시도
 │   └── top/
-│       └── tb_top.sv       TB 전체 (seq/drv/mon/sb 통합)
+│       └── tb_top.sv                      최종 iverilog 호환 TB
 ├── sim/
-│   ├── run.sh              빌드 + 실행 스크립트
-│   └── uart_tx.vcd         파형 (gitignore 처리)
-└── 20260329_lv1_retrospective.md
+│   ├── run.sh                             빌드 + 실행 스크립트
+│   └── uart_tx.vcd                        파형 (gitignore 처리)
+├── uart_tx_demo.html                      개념 시각화 HTML
+├── 20260329_lv1_retrospective.md          실습 회고
+├── 20260329_uart_register_strategy.md     레지스터 체험 확장 전략
+├── 20260329_uart_tx_demo_edit_notes.md    HTML 수정 내역
+└── 20260329_uart_concept_notes.md         UART 개념 정리 메모
 ```
 
 ---
